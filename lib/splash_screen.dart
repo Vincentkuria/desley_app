@@ -1,4 +1,4 @@
-import 'package:Desley/onboarding_screen.dart';
+import 'package:desley_app/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

@@ -1,4 +1,4 @@
-name: Desley
+name: desley_app
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -29,8 +29,11 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   cupertino_icons: ^1.0.6
+  dio: ^5.4.1
   flutter:
     sdk: flutter
+  lottie: ^3.1.0
+  shared_preferences: ^2.2.2
   smooth_page_indicator: ^1.1.0
 
 dev_dependencies:

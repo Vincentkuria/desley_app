@@ -1,4 +1,4 @@
-import 'package:Desley/splash_screen.dart';
+import 'package:desley_app/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,6 +11,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: Splash());
+    return const MaterialApp(debugShowCheckedModeBanner: false, home: Splash());
   }
 }
