@@ -83,8 +83,12 @@ class _RegisterState extends State<Register> {
         String token = dioresponse.data['data']['token'];
         var stored = await prefs.setString('token', token);
         if (stored) {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HomeScreen(
+                        token: token,
+                      )));
         }
       } on DioException catch (e) {
         if (e.response != null) {
@@ -114,6 +118,11 @@ class _RegisterState extends State<Register> {
                 height: 20,
               ),
               TextField(
+                onChanged: (text) {
+                  setState(() {
+                    passwordError = '';
+                  });
+                },
                 controller: _firstnameController,
                 decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.person),
@@ -127,6 +136,11 @@ class _RegisterState extends State<Register> {
                 height: 20,
               ),
               TextField(
+                onChanged: (text) {
+                  setState(() {
+                    passwordError = '';
+                  });
+                },
                 controller: _lastnameController,
                 decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.person),
@@ -140,6 +154,11 @@ class _RegisterState extends State<Register> {
                 height: 20,
               ),
               TextField(
+                onChanged: (text) {
+                  setState(() {
+                    passwordError = '';
+                  });
+                },
                 controller: _phoneNoController,
                 decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.call),
@@ -153,6 +172,11 @@ class _RegisterState extends State<Register> {
                 height: 20,
               ),
               TextField(
+                onChanged: (text) {
+                  setState(() {
+                    passwordError = '';
+                  });
+                },
                 controller: _emailController,
                 decoration: InputDecoration(
                     prefixIcon: const Icon(Icons.email),
@@ -166,6 +190,11 @@ class _RegisterState extends State<Register> {
                 height: 20,
               ),
               TextField(
+                onChanged: (text) {
+                  setState(() {
+                    passwordError = '';
+                  });
+                },
                 autocorrect: false,
                 obscureText: true,
                 controller: _passwordController,
@@ -181,6 +210,11 @@ class _RegisterState extends State<Register> {
                 height: 20,
               ),
               TextField(
+                onChanged: (text) {
+                  setState(() {
+                    passwordError = '';
+                  });
+                },
                 autocorrect: false,
                 obscureText: true,
                 controller: _confirmPasswordController,
@@ -193,6 +227,7 @@ class _RegisterState extends State<Register> {
                         color: _confirmpassword ? Colors.red : Colors.grey),
                     border: const OutlineInputBorder()),
               ),
+              // ignore: sized_box_for_whitespace
               Container(
                 height: 20,
                 child: Text(

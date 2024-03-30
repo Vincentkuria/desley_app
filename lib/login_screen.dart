@@ -24,7 +24,11 @@ class _LoginState extends State<Login> {
     var stored = await prefs.setString(key, value);
     if (stored == true) {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomeScreen(
+                    token: value,
+                  )));
     }
   }
 
@@ -73,6 +77,11 @@ class _LoginState extends State<Login> {
               height: 40,
             ),
             TextField(
+              onChanged: (text) {
+                setState(() {
+                  loginError = '';
+                });
+              },
               controller: _emailInputController,
               decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.email),
@@ -86,6 +95,11 @@ class _LoginState extends State<Login> {
               height: 20,
             ),
             TextField(
+              onChanged: (text) {
+                setState(() {
+                  loginError = '';
+                });
+              },
               autocorrect: false,
               obscureText: true,
               controller: _passwordInputController,
@@ -97,6 +111,7 @@ class _LoginState extends State<Login> {
                       TextStyle(color: passwordNull ? Colors.red : Colors.grey),
                   border: const OutlineInputBorder()),
             ),
+            // ignore: sized_box_for_whitespace
             Container(
               height: 20,
               child: Text(
