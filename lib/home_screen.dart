@@ -3,7 +3,9 @@ import 'package:desley_app/viewing_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   final String token;
@@ -22,6 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
   var equipments = [];
   var services = [];
   var spares = [];
+  Map<String, dynamic> user = {};
+  var toMoney = NumberFormat("#,##0.00", "en_US");
 
   void _getSalesData() async {
     final dio = Dio();
@@ -69,11 +73,24 @@ class _HomeScreenState extends State<HomeScreen> {
     } on DioException catch (e) {
       //dynamic error = e.response?.data;
     }
+
+    try {
+      var response = await dio.get('/api/user',
+          options: Options(headers: {
+            'Accept': 'application/vnd.api+json',
+            'Authorization': 'Bearer $token'
+          }));
+      user = response.data['data'];
+      // ignore: unused_catch_clause
+    } on DioException catch (e) {
+      //dynamic error = e.response?.data;
+    }
   }
 
   @override
   void initState() {
     _getSalesData();
+
     super.initState();
   }
 
@@ -120,7 +137,56 @@ class _HomeScreenState extends State<HomeScreen> {
           width: 300,
           color: Colors.white,
           child: ListView(
-            children: [DrawerHeader(child: Text(token))],
+            children: [
+              DrawerHeader(
+                  decoration: BoxDecoration(color: Colors.indigo[900]),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${user['first_name']}' ' ' '${user['last_name']}',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                            color: Colors.white),
+                      ),
+                      Text(
+                        '${user['email']}',
+                        style: TextStyle(color: Colors.indigo[200]),
+                      )
+                    ],
+                  )),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: MaterialButton(
+                  onPressed: () async {
+                    final dio = Dio();
+                    dio.options.baseUrl = 'http://10.0.2.2:8000';
+                    dio.options.connectTimeout = const Duration(seconds: 5);
+                    dio.options.receiveTimeout = const Duration(minutes: 1);
+                    dio.options.contentType = 'application/vnd.api+json';
+                    dio.options.responseType = ResponseType.json;
+
+                    try {
+                      await dio.post('/api/logout',
+                          options: Options(headers: {
+                            'Accept': 'application/vnd.api+json',
+                            'Authorization': 'Bearer $token'
+                          }));
+                      final SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.remove('token');
+                      // ignore: unused_catch_clause
+                    } on DioException catch (e) {
+                      //dynamic error = e.response?.data;
+                    }
+                  },
+                  color: Colors.indigo,
+                  textColor: Colors.white,
+                  child: Text('Logout'),
+                ),
+              )
+            ],
           ),
         ),
         //........
@@ -206,7 +272,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               TextDecoration
                                                                   .lineThrough)),
                                                   Text(
-                                                    '${equipments[index]['price']}',
+                                                    '${toMoney.format(equipments[index]['price'])}',
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.w700),
@@ -224,8 +290,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             }))
               ],
             ),
-            // todo..............................................
-            //todo...........................................
             Column(
               children: [
                 Container(
@@ -308,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 TextDecoration
                                                                     .lineThrough)),
                                                     Text(
-                                                      "${spares[index]['price']}",
+                                                      "${toMoney.format(spares[index]['price'])}",
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.w700),
@@ -409,7 +473,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                 TextDecoration
                                                                     .lineThrough)),
                                                     Text(
-                                                      '${services[index]['price']}',
+                                                      '${toMoney.format(services[index]['price'])}',
                                                       style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.w700),

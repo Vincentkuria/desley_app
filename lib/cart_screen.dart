@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:intl/intl.dart';
 
 class Cart extends StatefulWidget {
   final String token;
@@ -17,6 +18,7 @@ class _CartState extends State<Cart> {
   var data = [];
   _CartState({required this.token});
   final dio = Dio();
+  var toMoney = NumberFormat("#,##0.00", "en_US");
 
   void _getCartItems() async {
     data = [];
@@ -176,7 +178,7 @@ class _CartState extends State<Cart> {
                                       'Amount Ksh',
                                       style: TextStyle(fontSize: 10),
                                     ),
-                                    Text('${totalPrice().toString()}',
+                                    Text('${toMoney.format(totalPrice())}',
                                         style: TextStyle(
                                             fontSize: 20,
                                             color: Colors.green,
@@ -214,7 +216,7 @@ class _CartState extends State<Cart> {
               },
               color: Colors.indigo[900],
               child: Text(
-                'checkout( Ksh${totalPrice().toString()})',
+                'checkout Ksh ${toMoney.format(totalPrice())}',
                 style: const TextStyle(color: Colors.white, fontSize: 15),
               ),
             ),
@@ -238,7 +240,7 @@ class _CartState extends State<Cart> {
 
                   String imageUrl = data[index][itemType]['img_url'];
                   String name = data[index][itemType]['name'];
-                  dynamic price = data[index][itemType]['price'];
+                  String price = toMoney.format(data[index][itemType]['price']);
                   dynamic count = data[index]['count'];
                   int id = data[index]['id'];
 
