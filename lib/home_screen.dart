@@ -115,6 +115,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actions: [
             GestureDetector(
+              onTap: () {
+                showSearch(
+                    context: context,
+                    delegate: MySearchDelegate(
+                        token: token, currentPage: controller.page!.toInt()));
+              },
               child: const Icon(
                 Icons.search,
                 size: 30,
@@ -324,7 +330,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         builder: (context) => Viewing(
                                               viewtype: 'spares',
                                               token: token,
-                                              data: equipments[index],
+                                              data: spares[index],
                                             ))),
                                 child: Column(
                                   children: [
@@ -546,5 +552,203 @@ class _HomeScreenState extends State<HomeScreen> {
         //...........
       ),
     );
+  }
+}
+
+class MySearchDelegate extends SearchDelegate {
+  String token;
+  var searchResponse = [];
+  var toMoney = NumberFormat("#,##0.00", "en_US");
+  int currentPage;
+  String searchData = '';
+  String title = '';
+  String viewtype = '';
+  MySearchDelegate({required this.token, required this.currentPage});
+
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        onPressed: () {
+          if (query.isEmpty) {
+            close(context, null);
+          } else {
+            query = '';
+          }
+        },
+        icon: const Icon(Icons.clear),
+      ),
+      IconButton(
+          onPressed: () async {
+            final dio = Dio();
+            dio.options.baseUrl = 'http://10.0.2.2:8000';
+            dio.options.connectTimeout = const Duration(seconds: 5);
+            dio.options.receiveTimeout = const Duration(minutes: 1);
+            dio.options.contentType = 'application/vnd.api+json';
+            dio.options.responseType = ResponseType.json;
+
+            if (query.isNotEmpty && currentPage == 0) {
+              try {
+                var response = await dio.get('/api/equipment-search',
+                    data: {'search': query},
+                    options: Options(headers: {
+                      'Accept': 'application/vnd.api+json',
+                      'Authorization': 'Bearer $token'
+                    }));
+                searchResponse = response.data['data'];
+                title = 'Equipments';
+                viewtype = 'equipments';
+
+                showResults(context);
+                // ignore: unused_catch_clause
+              } on DioException catch (e) {
+                // dynamic error = e.response?.data;
+              }
+            }
+
+            if (query.isNotEmpty && currentPage == 1) {
+              try {
+                var response = await dio.get('/api/spare-search',
+                    data: {'search': query},
+                    options: Options(headers: {
+                      'Accept': 'application/vnd.api+json',
+                      'Authorization': 'Bearer $token'
+                    }));
+                searchResponse = response.data['data'];
+                title = 'Spares';
+                viewtype = 'spares';
+                showResults(context);
+                // ignore: unused_catch_clause
+              } on DioException catch (e) {
+                // dynamic error = e.response?.data;
+              }
+            }
+
+            if (query.isNotEmpty && currentPage == 2) {
+              try {
+                var response = await dio.get('/api/service-search',
+                    data: {'search': query},
+                    options: Options(headers: {
+                      'Accept': 'application/vnd.api+json',
+                      'Authorization': 'Bearer $token'
+                    }));
+                searchResponse = response.data['data'];
+                title = 'Services';
+                viewtype = 'services';
+                showResults(context);
+                // ignore: unused_catch_clause
+              } on DioException catch (e) {
+                // dynamic error = e.response?.data;
+              }
+            }
+          },
+          icon: const Icon(Icons.search))
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return null;
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              title,
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+        Expanded(
+            child: searchResponse.isEmpty
+                ? Center(
+                    child:
+                        Lottie.asset('assets/images/loading.json', height: 100),
+                  )
+                : GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2),
+                    itemCount: searchResponse.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Viewing(
+                                      viewtype: viewtype,
+                                      token: token,
+                                      data: searchResponse[index],
+                                    ))),
+                        child: Column(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: Image.network(
+                                searchResponse[index]['img_url'],
+                                width: 140,
+                                height: 110,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Column(
+                              children: [
+                                Text(
+                                  searchResponse[index]['name'],
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      const Text(
+                                        'ksh',
+                                      ),
+                                      Container(
+                                        width: 5,
+                                      ),
+                                      Column(
+                                        children: [
+                                          Text('70,000',
+                                              style: TextStyle(
+                                                  fontSize: 10,
+                                                  decoration: TextDecoration
+                                                      .lineThrough)),
+                                          Text(
+                                            '${toMoney.format(searchResponse[index]['price'])}',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w700),
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            )
+                          ],
+                        ),
+                      );
+                    }))
+      ],
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return const SizedBox();
   }
 }
