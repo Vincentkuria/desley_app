@@ -13,6 +13,7 @@ class Cart extends StatefulWidget {
   State<Cart> createState() => _CartState(token: token);
 }
 
+//TODO for a new user cart still loads because its null cart items find how to deal with that
 class _CartState extends State<Cart> {
   final String token;
   var data = [];

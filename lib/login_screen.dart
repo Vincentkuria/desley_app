@@ -47,6 +47,7 @@ class _LoginState extends State<Login> {
       String token = dioresponse.data['data']['token'];
       _storeValue('token', token, context);
     } on DioException catch (e) {
+      // TODO confirm that the error.response exists. also use e.message incase of network errors or timeout
       loginError = e.response?.data['message'];
     }
   }

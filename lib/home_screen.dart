@@ -1,4 +1,5 @@
 import 'package:desley_app/cart_screen.dart';
+import 'package:desley_app/onboarding_screen.dart';
 import 'package:desley_app/viewing_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -182,8 +183,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       final SharedPreferences prefs =
                           await SharedPreferences.getInstance();
                       await prefs.remove('token');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const OnBoarding()));
+                      //TODO after logingout the use navigate him to login page.
                       // ignore: unused_catch_clause
-                    } on DioException catch (e) {
+                    } catch (e) {
                       //dynamic error = e.response?.data;
                     }
                   },
@@ -653,6 +659,7 @@ class MySearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
+    //TODO find how to deal with keyboard click search or enter
     return Column(
       children: [
         Container(
