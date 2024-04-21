@@ -13,6 +13,7 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.token});
 
   @override
+  // ignore: no_logic_in_create_state
   State<HomeScreen> createState() => _HomeScreenState(token: token);
 }
 
@@ -81,7 +82,11 @@ class _HomeScreenState extends State<HomeScreen> {
             'Accept': 'application/vnd.api+json',
             'Authorization': 'Bearer $token'
           }));
-      user = response.data['data'];
+
+      setState(() {
+        user = response.data['data'];
+      });
+
       // ignore: unused_catch_clause
     } on DioException catch (e) {
       //dynamic error = e.response?.data;
@@ -152,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Text(
                         '${user['first_name']}' ' ' '${user['last_name']}',
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 30,
                             color: Colors.white),
@@ -184,10 +189,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           await SharedPreferences.getInstance();
                       await prefs.remove('token');
                       Navigator.push(
+                          // ignore: use_build_context_synchronously
                           context,
                           MaterialPageRoute(
                               builder: (context) => const OnBoarding()));
-                      //TODO after logingout the use navigate him to login page.
+
                       // ignore: unused_catch_clause
                     } catch (e) {
                       //dynamic error = e.response?.data;
@@ -195,7 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   color: Colors.indigo,
                   textColor: Colors.white,
-                  child: Text('Logout'),
+                  child: const Text('Logout'),
                 ),
               )
             ],
@@ -258,7 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         Text(
                                           equipments[index]['name'],
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               color: Colors.black,
                                               fontWeight: FontWeight.w600),
                                         ),
@@ -277,15 +283,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                               Column(
                                                 children: [
-                                                  Text('70,000',
+                                                  const Text('70,000',
                                                       style: TextStyle(
                                                           fontSize: 10,
                                                           decoration:
                                                               TextDecoration
                                                                   .lineThrough)),
                                                   Text(
-                                                    '${toMoney.format(equipments[index]['price'])}',
-                                                    style: TextStyle(
+                                                    toMoney.format(
+                                                        equipments[index]
+                                                            ['price']),
+                                                    style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.w700),
                                                   )
@@ -358,7 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           Text(
                                             '${spares[index]['name']}',
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w600),
                                           ),
@@ -377,15 +385,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                                 Column(
                                                   children: [
-                                                    Text('70,000',
+                                                    const Text('70,000',
                                                         style: TextStyle(
                                                             fontSize: 10,
                                                             decoration:
                                                                 TextDecoration
                                                                     .lineThrough)),
                                                     Text(
-                                                      "${toMoney.format(spares[index]['price'])}",
-                                                      style: TextStyle(
+                                                      toMoney.format(
+                                                          spares[index]
+                                                              ['price']),
+                                                      style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.w700),
                                                     )
@@ -459,7 +469,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           Text(
                                             '${services[index]['name']}',
                                             overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w600),
                                           ),
@@ -478,15 +488,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                                 Column(
                                                   children: [
-                                                    Text('70,000',
+                                                    const Text('70,000',
                                                         style: TextStyle(
                                                             fontSize: 10,
                                                             decoration:
                                                                 TextDecoration
                                                                     .lineThrough)),
                                                     Text(
-                                                      '${toMoney.format(services[index]['price'])}',
-                                                      style: TextStyle(
+                                                      toMoney.format(
+                                                          services[index]
+                                                              ['price']),
+                                                      style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.w700),
                                                     )
@@ -605,6 +617,7 @@ class MySearchDelegate extends SearchDelegate {
                 title = 'Equipments';
                 viewtype = 'equipments';
 
+                // ignore: use_build_context_synchronously
                 showResults(context);
                 // ignore: unused_catch_clause
               } on DioException catch (e) {
@@ -623,6 +636,7 @@ class MySearchDelegate extends SearchDelegate {
                 searchResponse = response.data['data'];
                 title = 'Spares';
                 viewtype = 'spares';
+                // ignore: use_build_context_synchronously
                 showResults(context);
                 // ignore: unused_catch_clause
               } on DioException catch (e) {
@@ -641,6 +655,7 @@ class MySearchDelegate extends SearchDelegate {
                 searchResponse = response.data['data'];
                 title = 'Services';
                 viewtype = 'services';
+                // ignore: use_build_context_synchronously
                 showResults(context);
                 // ignore: unused_catch_clause
               } on DioException catch (e) {
@@ -665,10 +680,10 @@ class MySearchDelegate extends SearchDelegate {
         Container(
           alignment: Alignment.topLeft,
           child: Padding(
-            padding: EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(8.0),
             child: Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                   color: Colors.black,
                   fontSize: 20,
                   fontWeight: FontWeight.bold),
@@ -712,7 +727,7 @@ class MySearchDelegate extends SearchDelegate {
                                 Text(
                                   searchResponse[index]['name'],
                                   overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w600),
                                 ),
@@ -729,14 +744,15 @@ class MySearchDelegate extends SearchDelegate {
                                       ),
                                       Column(
                                         children: [
-                                          Text('70,000',
+                                          const Text('70,000',
                                               style: TextStyle(
                                                   fontSize: 10,
                                                   decoration: TextDecoration
                                                       .lineThrough)),
                                           Text(
-                                            '${toMoney.format(searchResponse[index]['price'])}',
-                                            style: TextStyle(
+                                            toMoney.format(
+                                                searchResponse[index]['price']),
+                                            style: const TextStyle(
                                                 fontWeight: FontWeight.w700),
                                           )
                                         ],
