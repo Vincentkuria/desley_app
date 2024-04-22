@@ -584,6 +584,74 @@ class MySearchDelegate extends SearchDelegate {
   MySearchDelegate({required this.token, required this.currentPage});
 
   @override
+  void showResults(BuildContext context) async {
+    final dio = Dio();
+    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.connectTimeout = const Duration(seconds: 5);
+    dio.options.receiveTimeout = const Duration(minutes: 1);
+    dio.options.contentType = 'application/vnd.api+json';
+    dio.options.responseType = ResponseType.json;
+
+    if (query.isNotEmpty && currentPage == 0) {
+      try {
+        var response = await dio.get('/api/equipment-search',
+            data: {'search': query},
+            options: Options(headers: {
+              'Accept': 'application/vnd.api+json',
+              'Authorization': 'Bearer $token'
+            }));
+        searchResponse = response.data['data'];
+        title = 'Equipments';
+        viewtype = 'equipments';
+
+        // ignore: use_build_context_synchronously
+        super.showResults(context);
+        // ignore: unused_catch_clause
+      } on DioException catch (e) {
+        // dynamic error = e.response?.data;
+      }
+    }
+
+    if (query.isNotEmpty && currentPage == 1) {
+      try {
+        var response = await dio.get('/api/spare-search',
+            data: {'search': query},
+            options: Options(headers: {
+              'Accept': 'application/vnd.api+json',
+              'Authorization': 'Bearer $token'
+            }));
+        searchResponse = response.data['data'];
+        title = 'Spares';
+        viewtype = 'spares';
+        // ignore: use_build_context_synchronously
+        super.showResults(context);
+        // ignore: unused_catch_clause
+      } on DioException catch (e) {
+        // dynamic error = e.response?.data;
+      }
+    }
+
+    if (query.isNotEmpty && currentPage == 2) {
+      try {
+        var response = await dio.get('/api/service-search',
+            data: {'search': query},
+            options: Options(headers: {
+              'Accept': 'application/vnd.api+json',
+              'Authorization': 'Bearer $token'
+            }));
+        searchResponse = response.data['data'];
+        title = 'Services';
+        viewtype = 'services';
+        // ignore: use_build_context_synchronously
+        super.showResults(context);
+        // ignore: unused_catch_clause
+      } on DioException catch (e) {
+        // dynamic error = e.response?.data;
+      }
+    }
+  }
+
+  @override
   List<Widget>? buildActions(BuildContext context) {
     return [
       IconButton(
@@ -598,70 +666,7 @@ class MySearchDelegate extends SearchDelegate {
       ),
       IconButton(
           onPressed: () async {
-            final dio = Dio();
-            dio.options.baseUrl = 'http://10.0.2.2:8000';
-            dio.options.connectTimeout = const Duration(seconds: 5);
-            dio.options.receiveTimeout = const Duration(minutes: 1);
-            dio.options.contentType = 'application/vnd.api+json';
-            dio.options.responseType = ResponseType.json;
-
-            if (query.isNotEmpty && currentPage == 0) {
-              try {
-                var response = await dio.get('/api/equipment-search',
-                    data: {'search': query},
-                    options: Options(headers: {
-                      'Accept': 'application/vnd.api+json',
-                      'Authorization': 'Bearer $token'
-                    }));
-                searchResponse = response.data['data'];
-                title = 'Equipments';
-                viewtype = 'equipments';
-
-                // ignore: use_build_context_synchronously
-                showResults(context);
-                // ignore: unused_catch_clause
-              } on DioException catch (e) {
-                // dynamic error = e.response?.data;
-              }
-            }
-
-            if (query.isNotEmpty && currentPage == 1) {
-              try {
-                var response = await dio.get('/api/spare-search',
-                    data: {'search': query},
-                    options: Options(headers: {
-                      'Accept': 'application/vnd.api+json',
-                      'Authorization': 'Bearer $token'
-                    }));
-                searchResponse = response.data['data'];
-                title = 'Spares';
-                viewtype = 'spares';
-                // ignore: use_build_context_synchronously
-                showResults(context);
-                // ignore: unused_catch_clause
-              } on DioException catch (e) {
-                // dynamic error = e.response?.data;
-              }
-            }
-
-            if (query.isNotEmpty && currentPage == 2) {
-              try {
-                var response = await dio.get('/api/service-search',
-                    data: {'search': query},
-                    options: Options(headers: {
-                      'Accept': 'application/vnd.api+json',
-                      'Authorization': 'Bearer $token'
-                    }));
-                searchResponse = response.data['data'];
-                title = 'Services';
-                viewtype = 'services';
-                // ignore: use_build_context_synchronously
-                showResults(context);
-                // ignore: unused_catch_clause
-              } on DioException catch (e) {
-                // dynamic error = e.response?.data;
-              }
-            }
+            showResults(context);
           },
           icon: const Icon(Icons.search))
     ];
@@ -674,7 +679,6 @@ class MySearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    //TODO find how to deal with keyboard click search or enter
     return Column(
       children: [
         Container(
@@ -692,9 +696,8 @@ class MySearchDelegate extends SearchDelegate {
         ),
         Expanded(
             child: searchResponse.isEmpty
-                ? Center(
-                    child:
-                        Lottie.asset('assets/images/loading.json', height: 100),
+                ? const Center(
+                    child: Text('your Search was not found'),
                   )
                 : GridView.builder(
                     gridDelegate:

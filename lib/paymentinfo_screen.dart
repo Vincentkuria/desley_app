@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 class PaymentInfo extends StatefulWidget {
   final String token;
+  // ignore: prefer_const_constructors_in_immutables
   PaymentInfo({super.key, required this.token});
 
   @override
@@ -24,7 +25,7 @@ class _PaymentInfoState extends State<PaymentInfo> {
           child: Center(
             child: Column(
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 70,
                 ),
                 Image.asset(
@@ -33,11 +34,11 @@ class _PaymentInfoState extends State<PaymentInfo> {
                   width: 60,
                   fit: BoxFit.contain,
                 ),
-                Text(
+                const Text(
                   'Desley',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 40,
                 ),
                 Image.asset(
@@ -55,7 +56,7 @@ class _PaymentInfoState extends State<PaymentInfo> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 150,
                 ),
                 MaterialButton(
@@ -63,7 +64,7 @@ class _PaymentInfoState extends State<PaymentInfo> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => HomeScreen(token: token))),
-                  child: Text('Back Home'),
+                  child: const Text('Back Home'),
                 )
               ],
             ),

@@ -61,68 +61,62 @@ class _OnBoardingState extends State<OnBoarding> {
             PageView(
               controller: controller,
               children: [
-                Container(
-                  //color: Colors.lightBlue[50],
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 20,
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 20,
+                      ),
+                      Lottie.asset('assets/images/futuristic.json'),
+                      Container(
+                        height: 20,
+                      ),
+                      const Text(
+                        'Futuristic farm Machenary',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 30,
                         ),
-                        Lottie.asset('assets/images/futuristic.json'),
-                        Container(
-                          height: 20,
-                        ),
-                        const Text(
-                          'Futuristic farm Machenary',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontSize: 30,
-                          ),
-                        ),
-                        Container(
-                          height: 20,
-                        ),
-                        const Text(
-                          'get the best farm machenary from Desley Holdings Limited and automate your whole farming and Food processing at affordable prices.',
-                          textAlign: TextAlign.center,
-                        )
-                      ],
-                    ),
+                      ),
+                      Container(
+                        height: 20,
+                      ),
+                      const Text(
+                        'get the best farm machenary from Desley Holdings Limited and automate your whole farming and Food processing at affordable prices.',
+                        textAlign: TextAlign.center,
+                      )
+                    ],
                   ),
                 ),
-                Container(
-                  //color: Colors.lightBlue[50],
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 20,
-                        ),
-                        Lottie.asset('assets/images/delivery truck.json'),
-                        Container(
-                          height: 20,
-                        ),
-                        const Text(
-                          'We deliver',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Container(
-                          height: 20,
-                        ),
-                        const Text(
-                          'we deliver all machenary regardles of the size to your door step all over Kenya within 48hrs and provide with a skilled technician to help with the installation process',
-                          textAlign: TextAlign.center,
-                        )
-                      ],
-                    ),
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 20,
+                      ),
+                      Lottie.asset('assets/images/delivery truck.json'),
+                      Container(
+                        height: 20,
+                      ),
+                      const Text(
+                        'We deliver',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      Container(
+                        height: 20,
+                      ),
+                      const Text(
+                        'we deliver all machenary regardles of the size to your door step all over Kenya within 48hrs and provide with a skilled technician to help with the installation process',
+                        textAlign: TextAlign.center,
+                      )
+                    ],
                   ),
                 )
               ],

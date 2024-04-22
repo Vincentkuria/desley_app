@@ -1,6 +1,6 @@
 // ignore_for_file: empty_catches
 
-import 'package:desley_app/PaymentinfoScreen.dart';
+import 'package:desley_app/paymentinfo_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

@@ -22,7 +22,7 @@ class _LoginState extends State<Login> {
   void _storeValue(String key, String value, BuildContext context) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     var stored = await prefs.setString(key, value);
-    if (stored == true) {
+    if (stored) {
       Navigator.push(
           // ignore: use_build_context_synchronously
           context,
@@ -46,10 +46,12 @@ class _LoginState extends State<Login> {
     try {
       var dioresponse = await dio.post('/api/login', data: data);
       String token = dioresponse.data['data']['token'];
+      // ignore: use_build_context_synchronously
       _storeValue('token', token, context);
     } on DioException catch (e) {
-      // TODO confirm that the error.response exists. also use e.message incase of network errors or timeout
-      loginError = e.response?.data['message'];
+      if (e.response != null) {
+        loginError = e.response!.data['message'];
+      }
     }
   }
 

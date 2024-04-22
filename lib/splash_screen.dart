@@ -1,3 +1,4 @@
+import 'package:desley_app/finance_home_screen.dart';
 import 'package:desley_app/home_screen.dart';
 import 'package:desley_app/onboarding_screen.dart';
 import 'package:flutter/material.dart';
@@ -21,19 +22,40 @@ class _SplashState extends State<Splash> {
 
   Future<void> _fetchApiData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token = prefs.getString('token');
+    var token = await prefs.getString('token');
+    print(token);
+    String? role;
+
     if (token != null) {
-      Future.delayed(
-          const Duration(seconds: 2),
-          () => {
-                Navigator.push(
-                    // ignore: use_build_context_synchronously
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => HomeScreen(
-                              token: token,
-                            )))
-              });
+      role = await prefs.getString(token);
+      print(role);
+      if (role != null) {
+        if (role == 'finance') {
+          Future.delayed(
+              const Duration(seconds: 2),
+              () => {
+                    Navigator.push(
+                        // ignore: use_build_context_synchronously
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => FinanceHome(
+                                  token: token,
+                                )))
+                  });
+        }
+      } else {
+        Future.delayed(
+            const Duration(seconds: 2),
+            () => {
+                  Navigator.push(
+                      // ignore: use_build_context_synchronously
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => HomeScreen(
+                                token: token,
+                              )))
+                });
+      }
     } else {
       Future.delayed(
           const Duration(seconds: 2),
