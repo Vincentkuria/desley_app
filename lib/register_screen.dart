@@ -53,6 +53,20 @@ class _RegisterState extends State<Register> {
         _phoneNoController.text.isNotEmpty &&
         _passwordController.text.isNotEmpty &&
         _confirmPasswordController.text.isNotEmpty) {
+      if (!_emailController.text.trim().contains('@') ||
+          !_emailController.text.trim().contains('.')) {
+        passwordError = 'please give a valid email adress';
+        return;
+      }
+
+      if (_phoneNoController.text.trim().length < 10) {
+        passwordError = 'phone number should be a minimum of  10 numbers';
+        return;
+      }
+      if (!RegExp(r'^\d+$').hasMatch(_phoneNoController.text.trim())) {
+        passwordError = 'please give a valid phone number';
+        return;
+      }
       if (_passwordController.text.length < 8) {
         passwordError = 'password should be a minimum of 8 characters';
         return;

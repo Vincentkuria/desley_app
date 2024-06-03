@@ -1,9 +1,13 @@
+// ignore_for_file: prefer_typing_uninitialized_variables, prefer_interpolation_to_compose_strings
+
+import 'package:desley_app/onboarding_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class FinanceHome extends StatefulWidget {
@@ -25,6 +29,7 @@ class _FinanceHomeState extends State<FinanceHome> {
   int? monthlyDeductions;
   List<dynamic>? pendingPayments;
   List<dynamic>? approvedPayments;
+  Map<String, dynamic> euser = {};
   // var toMoney = NumberFormat("#,##0.00", "en_US");
   _FinanceHomeState({required this.token});
 
@@ -66,7 +71,6 @@ class _FinanceHomeState extends State<FinanceHome> {
             'Accept': 'application/vnd.api+json',
             'Authorization': 'Bearer $token'
           }));
-      print(response4.data['data']);
       setState(() {
         pendingPayments = response4.data['data'];
       });
@@ -82,9 +86,23 @@ class _FinanceHomeState extends State<FinanceHome> {
 
       // ignore: unused_catch_clause
     } on DioException catch (e) {
-      print("vini" "${e.message}");
-      print(e.response?.data['message']);
       // dynamic error = e.response?.data;
+    }
+
+    try {
+      var response = await dio.get('/api/euser',
+          options: Options(headers: {
+            'Accept': 'application/vnd.api+json',
+            'Authorization': 'Bearer $token'
+          }));
+
+      setState(() {
+        euser = response.data['data'];
+      });
+
+      // ignore: unused_catch_clause
+    } on DioException catch (e) {
+      //dynamic error = e.response?.data;
     }
   }
 
@@ -95,19 +113,18 @@ class _FinanceHomeState extends State<FinanceHome> {
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
     dio.options.responseType = ResponseType.json;
-    print('vinnnnnnn');
 
     try {
+      // ignore: unused_local_variable
       var approvalResponse = await dio.post('/api/approve-payment',
           data: {'id': id},
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
             'Authorization': 'Bearer $token'
           }));
-      print(approvalResponse);
       return true;
+      // ignore: unused_catch_clause
     } on DioException catch (e) {
-      print(e.message);
       return false;
     }
   }
@@ -130,8 +147,8 @@ class _FinanceHomeState extends State<FinanceHome> {
       },
       child: Scaffold(
         appBar: AppBar(
-          leading: Icon(Icons.monetization_on_rounded),
-          title: Text(
+          //leading: const Icon(Icons.monetization_on_rounded),
+          title: const Text(
             'Finance',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
@@ -151,9 +168,71 @@ class _FinanceHomeState extends State<FinanceHome> {
                                   token: token,
                                   currentPage: controller.page!.toInt()));
                         },
-                        child: Icon(Icons.search)),
+                        child: const Icon(Icons.search)),
                   )
           ],
+        ),
+        drawer: Container(
+          width: 300,
+          color: Colors.white,
+          child: ListView(
+            children: [
+              DrawerHeader(
+                  decoration: BoxDecoration(color: Colors.indigo[900]),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '${euser['first_name']}' ' ' '${euser['last_name']}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30,
+                            color: Colors.white),
+                      ),
+                      Text(
+                        '${euser['email']}',
+                        style: TextStyle(color: Colors.indigo[200]),
+                      )
+                    ],
+                  )),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: MaterialButton(
+                  onPressed: () async {
+                    final dio = Dio();
+                    dio.options.baseUrl = 'http://10.0.2.2:8000';
+                    dio.options.connectTimeout = const Duration(seconds: 5);
+                    dio.options.receiveTimeout = const Duration(minutes: 1);
+                    dio.options.contentType = 'application/vnd.api+json';
+                    dio.options.responseType = ResponseType.json;
+
+                    try {
+                      await dio.post('/api/logout',
+                          options: Options(headers: {
+                            'Accept': 'application/vnd.api+json',
+                            'Authorization': 'Bearer $token'
+                          }));
+                      final SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.remove('token');
+                      Navigator.push(
+                          // ignore: use_build_context_synchronously
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const OnBoarding()));
+
+                      // ignore: unused_catch_clause
+                    } catch (e) {
+                      //dynamic error = e.response?.data;
+                    }
+                  },
+                  color: Colors.indigo,
+                  textColor: Colors.white,
+                  child: const Text('Logout'),
+                ),
+              )
+            ],
+          ),
         ),
         body: PageView(
           controller: controller,
@@ -190,19 +269,20 @@ class _FinanceHomeState extends State<FinanceHome> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     'TOTAL',
                                     style: TextStyle(fontSize: 60),
                                   ),
                                   Text(
                                     'Ksh $total',
-                                    style: TextStyle(fontSize: 20),
+                                    style: const TextStyle(fontSize: 20),
                                   )
                                 ],
                               ),
                             ),
                           ),
                         ),
+                        // ignore: avoid_unnecessary_containers
                         Container(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -227,13 +307,13 @@ class _FinanceHomeState extends State<FinanceHome> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text('Monthly'),
-                                      Text(
+                                      const Text('Monthly'),
+                                      const Text(
                                         'DEDUCTIONS',
                                         style: TextStyle(fontSize: 15),
                                       ),
                                       Text('Ksh $monthlyDeductions',
-                                          style: TextStyle(fontSize: 20))
+                                          style: const TextStyle(fontSize: 20))
                                     ],
                                   ),
                                 ),
@@ -258,11 +338,11 @@ class _FinanceHomeState extends State<FinanceHome> {
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text('Monthly'),
-                                      Text('INCOME',
+                                      const Text('Monthly'),
+                                      const Text('INCOME',
                                           style: TextStyle(fontSize: 15)),
                                       Text('Ksh $monthlyIncome',
-                                          style: TextStyle(fontSize: 20))
+                                          style: const TextStyle(fontSize: 20))
                                     ],
                                   ),
                                 ),
@@ -324,10 +404,10 @@ class _FinanceHomeState extends State<FinanceHome> {
                                             width: 10,
                                             height: 10,
                                             color: Colors.amber),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 4,
                                         ),
-                                        Text('Equipments')
+                                        const Text('Equipments')
                                       ],
                                     ),
                                     Column(
@@ -336,10 +416,10 @@ class _FinanceHomeState extends State<FinanceHome> {
                                             width: 10,
                                             height: 10,
                                             color: Colors.indigo),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 4,
                                         ),
-                                        Text('Spares')
+                                        const Text('Spares')
                                       ],
                                     ),
                                     Column(
@@ -348,10 +428,10 @@ class _FinanceHomeState extends State<FinanceHome> {
                                             width: 10,
                                             height: 10,
                                             color: Colors.green),
-                                        SizedBox(
+                                        const SizedBox(
                                           width: 4,
                                         ),
-                                        Text('Services')
+                                        const Text('Services')
                                       ],
                                     ),
                                   ],
@@ -382,7 +462,7 @@ class _FinanceHomeState extends State<FinanceHome> {
                                     0.4), // Shadow color with opacity
                                 spreadRadius: 3, // How much the shadow spreads
                                 blurRadius: 2, // How much the shadow blurs
-                                offset: Offset(
+                                offset: const Offset(
                                     1, 3), // Positioning of the shadow (x, y)
                               ),
                             ]),
@@ -393,12 +473,12 @@ class _FinanceHomeState extends State<FinanceHome> {
                                 children: [
                                   Row(
                                     children: [
-                                      Text(
+                                      const Text(
                                         'CODE:',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 5,
                                       ),
                                       Text(pendingPayments![index]
@@ -413,14 +493,15 @@ class _FinanceHomeState extends State<FinanceHome> {
                                                 null
                                             ? 'Customer:'
                                             : 'Supplier:',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 5,
                                       ),
                                       pendingPayments![index]['customer'] !=
                                               null
+                                          // ignore: prefer_adjacent_string_concatenation
                                           ? Text("${pendingPayments![index]['customer']?["first_name"]}" +
                                               " " +
                                               "${pendingPayments![index]['customer']?['last_name']}")
@@ -430,12 +511,12 @@ class _FinanceHomeState extends State<FinanceHome> {
                                   ),
                                   Row(
                                     children: [
-                                      Text(
+                                      const Text(
                                         'Amount:',
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      SizedBox(
+                                      const SizedBox(
                                         width: 5,
                                       ),
                                       Text(
@@ -472,7 +553,7 @@ class _FinanceHomeState extends State<FinanceHome> {
                                                     getPaymentsData()
                                                   });
                                         },
-                                        child: Text('Approve'),
+                                        child: const Text('Approve'),
                                       ),
                                     ),
                                   )
@@ -507,7 +588,7 @@ class _FinanceHomeState extends State<FinanceHome> {
                                             3, // How much the shadow spreads
                                         blurRadius:
                                             2, // How much the shadow blurs
-                                        offset: Offset(1,
+                                        offset: const Offset(1,
                                             3), // Positioning of the shadow (x, y)
                                       ),
                                     ]),
@@ -519,12 +600,12 @@ class _FinanceHomeState extends State<FinanceHome> {
                                     children: [
                                       Row(
                                         children: [
-                                          Text(
+                                          const Text(
                                             'CODE',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 5,
                                           ),
                                           Text(approvedPayments?[index]
@@ -539,10 +620,10 @@ class _FinanceHomeState extends State<FinanceHome> {
                                                     null
                                                 ? 'Customer:'
                                                 : 'Supplier:',
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 5,
                                           ),
                                           approvedPayments![index]
@@ -556,12 +637,12 @@ class _FinanceHomeState extends State<FinanceHome> {
                                       ),
                                       Row(
                                         children: [
-                                          Text(
+                                          const Text(
                                             'Amount:',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold),
                                           ),
-                                          SizedBox(
+                                          const SizedBox(
                                             width: 5,
                                           ),
                                           Text(
@@ -780,11 +861,11 @@ class MySearchDelegate extends SearchDelegate {
                         children: [
                           Row(
                             children: [
-                              Text(
+                              const Text(
                                 'CODE:',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
                               Text(searchResponse[index]['payment_code']
@@ -797,9 +878,10 @@ class MySearchDelegate extends SearchDelegate {
                                 searchResponse[index]['customer'] != null
                                     ? 'Customer:'
                                     : 'Supplier',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
                               Text(searchResponse[index]['customer'] != null
@@ -821,11 +903,11 @@ class MySearchDelegate extends SearchDelegate {
                           ),
                           Row(
                             children: [
-                              Text(
+                              const Text(
                                 'Amount:',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
                               Text(
@@ -852,7 +934,7 @@ class MySearchDelegate extends SearchDelegate {
                                           MediaQuery.of(context).size.width,
                                       color: Colors.green,
                                       onPressed: () async {},
-                                      child: Text('Approve'),
+                                      child: const Text('Approve'),
                                     ),
                             ),
                           )
@@ -869,16 +951,3 @@ class MySearchDelegate extends SearchDelegate {
     return const SizedBox();
   }
 }
-
-// try {
-//     var dio=Dio();
-//       await dio.post('/api/payments-search',
-//           data: {'id':searchResponse[index]['id']},
-//           options: Options(headers: {
-//             'Accept': 'application/vnd.api+json',
-//             'Authorization': 'Bearer $token'
-//           }));
-
-//     } on DioException catch (e) {
-//       // dynamic error = e.response?.data;
-//     }

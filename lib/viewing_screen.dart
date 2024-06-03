@@ -50,7 +50,7 @@ class _ViewingState extends State<Viewing> {
 
     try {
       // ignore: unused_local_variable
-      var dioresponse = await dio.post('/api/cartitems',
+      var dioresponse = await dio.post('/api/cart/store',
           data: data,
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
@@ -213,8 +213,7 @@ class _ViewingState extends State<Viewing> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Vincent'),
-                        Text(
-                            'what the fuck is this what the fuck is this what the fuck is this')
+                        Text('This is a very good machine, it serves me well')
                       ],
                     ),
                   ),

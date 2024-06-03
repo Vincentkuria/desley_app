@@ -20,19 +20,21 @@ class _CartState extends State<Cart> {
   final String token;
   List<dynamic>? data;
   _CartState({required this.token});
-  final dio = Dio();
+
   var toMoney = NumberFormat("#,##0.00", "en_US");
+  TextEditingController addressController = TextEditingController();
 
   void _getCartItems() async {
+    final dio1 = Dio();
     data = null;
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
-    dio.options.connectTimeout = const Duration(seconds: 5);
-    dio.options.receiveTimeout = const Duration(minutes: 1);
-    dio.options.contentType = 'application/vnd.api+json';
-    dio.options.responseType = ResponseType.json;
+    dio1.options.baseUrl = 'http://10.0.2.2:8000';
+    dio1.options.connectTimeout = const Duration(seconds: 5);
+    dio1.options.receiveTimeout = const Duration(minutes: 1);
+    dio1.options.contentType = 'application/vnd.api+json';
+    dio1.options.responseType = ResponseType.json;
 
     try {
-      var dioresponse = await dio.get('/api/cartitems',
+      var dioresponse = await dio1.get('/api/cart/index',
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
             'Authorization': 'Bearer $token'
@@ -41,7 +43,7 @@ class _CartState extends State<Cart> {
         data = dioresponse.data['data'];
       });
 
-      // print(data);
+      print(data);
 
       // ignore: unused_catch_clause
     } on DioException catch (e) {
@@ -50,13 +52,20 @@ class _CartState extends State<Cart> {
   }
 
   void _removeCart(item, currentCount) async {
+    final dio2 = Dio();
+    dio2.options.baseUrl = 'http://10.0.2.2:8000';
+    dio2.options.connectTimeout = const Duration(seconds: 5);
+    dio2.options.receiveTimeout = const Duration(minutes: 1);
+    dio2.options.contentType = 'application/vnd.api+json';
+    dio2.options.responseType = ResponseType.json;
+
     if (currentCount == 1) {
       return deletCartItem(item);
     }
     var total = currentCount - 1;
-    var addData = {'count': total};
+    var addData = {'count': total, 'id': item};
     try {
-      await dio.patch('/api/cartitems/$item',
+      await dio2.post('/api/cart/update',
           data: addData,
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
@@ -70,27 +79,43 @@ class _CartState extends State<Cart> {
   }
 
   void _addCart(item, currentCount) async {
+    final dio3 = Dio();
+    dio3.options.baseUrl = 'http://10.0.2.2:8000';
+    dio3.options.connectTimeout = const Duration(seconds: 5);
+    dio3.options.receiveTimeout = const Duration(minutes: 1);
+    dio3.options.contentType = 'application/vnd.api+json';
+    dio3.options.responseType = ResponseType.json;
+
     var total = currentCount + 1;
-    var addData = {'count': total};
+    var addData = {'count': total, 'id': item};
     try {
       // ignore: unused_local_variable
-      var dioresponse = await dio.patch('/api/cartitems/$item',
+      var dioresponse = await dio3.post('/api/cart/update',
           data: addData,
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
             'Authorization': 'Bearer $token'
           }));
+
       setState(() {
         _getCartItems();
       });
+
       // ignore: unused_catch_clause
     } on DioException catch (e) {}
   }
 
   void deletCartItem(item) async {
+    final dio4 = Dio();
+    dio4.options.baseUrl = 'http://10.0.2.2:8000';
+    dio4.options.connectTimeout = const Duration(seconds: 5);
+    dio4.options.receiveTimeout = const Duration(minutes: 1);
+    dio4.options.contentType = 'application/vnd.api+json';
+    dio4.options.responseType = ResponseType.json;
     try {
       // ignore: unused_local_variable
-      var dioresponse = await dio.delete('/api/cartitems/$item',
+      var dioresponse = await dio4.post('/api/cart/destroy',
+          data: {'id': item},
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
             'Authorization': 'Bearer $token'
@@ -132,15 +157,15 @@ class _CartState extends State<Cart> {
 
   void sendPayment() async {
     int paymentId;
-
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
-    dio.options.connectTimeout = const Duration(seconds: 5);
-    dio.options.receiveTimeout = const Duration(minutes: 1);
-    dio.options.contentType = 'application/vnd.api+json';
-    dio.options.responseType = ResponseType.json;
+    var dio5 = Dio();
+    dio5.options.baseUrl = 'http://10.0.2.2:8000';
+    dio5.options.connectTimeout = const Duration(seconds: 5);
+    dio5.options.receiveTimeout = const Duration(minutes: 1);
+    dio5.options.contentType = 'application/vnd.api+json';
+    dio5.options.responseType = ResponseType.json;
 
     try {
-      var response = await dio.post('/api/payments',
+      var response = await dio5.post('/api/payments',
           data: {'amount': totalPrice()},
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
@@ -158,9 +183,15 @@ class _CartState extends State<Cart> {
   }
 
   writeTransaction(int paymentId) async {
+    var dio6 = Dio();
+    dio6.options.baseUrl = 'http://10.0.2.2:8000';
+    dio6.options.connectTimeout = const Duration(seconds: 5);
+    dio6.options.receiveTimeout = const Duration(minutes: 1);
+    dio6.options.contentType = 'application/vnd.api+json';
+    dio6.options.responseType = ResponseType.json;
     for (Map item in data!) {
       try {
-        await dio.post('/api/custransactions',
+        await dio6.post('/api/custransactions',
             data: {
               'payment_id': paymentId,
               'eqipment_id': item.containsKey('equipment_id')
@@ -170,14 +201,16 @@ class _CartState extends State<Cart> {
                   item.containsKey('spare_id') ? item['spare_id'] : null,
               'service_id':
                   item.containsKey('service_id') ? item['service_id'] : null,
-              'count': item['count']
+              'count': item['count'],
+              'shipping_address': addressController.text
             },
             options: Options(headers: {
               'Accept': 'application/vnd.api+json',
               'Authorization': 'Bearer $token'
             }));
 
-        await dio.delete('/api/cartitems/${item['id']}',
+        await dio6.post('/api/cart/destroy',
+            data: {'id': item['id']},
             options: Options(headers: {
               'Accept': 'application/vnd.api+json',
               'Authorization': 'Bearer $token'
@@ -209,6 +242,7 @@ class _CartState extends State<Cart> {
                     builder: (context) {
                       TextEditingController controller =
                           TextEditingController();
+
                       return CupertinoAlertDialog(
                         title: Image.asset(
                           'assets/images/mpesa.png',
@@ -219,6 +253,15 @@ class _CartState extends State<Cart> {
                         content: SingleChildScrollView(
                           child: Column(
                             children: [
+                              const Text('Shipping Address'),
+                              CupertinoTextField(
+                                controller: addressController,
+                                prefix: const Icon(
+                                  Icons.location_on,
+                                  color: Colors.indigo,
+                                ),
+                                placeholder: 'r1, Home Appartments',
+                              ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(
@@ -254,7 +297,8 @@ class _CartState extends State<Cart> {
                               color: Colors.green,
                               onPressed: () {
                                 if (totalPrice() > 0 &&
-                                    controller.text.isNotEmpty) {
+                                    controller.text.isNotEmpty &&
+                                    addressController.text.isNotEmpty) {
                                   sendPayment();
                                 }
                               },
@@ -385,6 +429,7 @@ class _CartState extends State<Cart> {
                               ),
                               GestureDetector(
                                 onTap: () {
+                                  print("add tapped-----------------------");
                                   _addCart(id, count);
                                 },
                                 child: Image.asset(
