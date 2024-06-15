@@ -34,7 +34,7 @@ class _CartState extends State<Cart> {
     dio1.options.responseType = ResponseType.json;
 
     try {
-      var dioresponse = await dio1.get('/api/cart/index',
+      var dioresponse = await dio1.get('/api/cartitems',
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
             'Authorization': 'Bearer $token'
@@ -63,9 +63,9 @@ class _CartState extends State<Cart> {
       return deletCartItem(item);
     }
     var total = currentCount - 1;
-    var addData = {'count': total, 'id': item};
+    var addData = {'count': total};
     try {
-      await dio2.post('/api/cart/update',
+      await dio2.patch('/api/cartitems/$item',
           data: addData,
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
@@ -87,10 +87,10 @@ class _CartState extends State<Cart> {
     dio3.options.responseType = ResponseType.json;
 
     var total = currentCount + 1;
-    var addData = {'count': total, 'id': item};
+    var addData = {'count': total};
     try {
       // ignore: unused_local_variable
-      var dioresponse = await dio3.post('/api/cart/update',
+      var dioresponse = await dio3.patch('/api/cartitems/$item',
           data: addData,
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
@@ -114,8 +114,7 @@ class _CartState extends State<Cart> {
     dio4.options.responseType = ResponseType.json;
     try {
       // ignore: unused_local_variable
-      var dioresponse = await dio4.post('/api/cart/destroy',
-          data: {'id': item},
+      var dioresponse = await dio4.delete('/api/cartitems/$item',
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
             'Authorization': 'Bearer $token'
@@ -209,8 +208,7 @@ class _CartState extends State<Cart> {
               'Authorization': 'Bearer $token'
             }));
 
-        await dio6.post('/api/cart/destroy',
-            data: {'id': item['id']},
+        await dio6.delete('/api/cartitems/${item['id']}',
             options: Options(headers: {
               'Accept': 'application/vnd.api+json',
               'Authorization': 'Bearer $token'
@@ -427,17 +425,6 @@ class _CartState extends State<Cart> {
                               Container(
                                 width: 8,
                               ),
-                              GestureDetector(
-                                onTap: () {
-                                  print("add tapped-----------------------");
-                                  _addCart(id, count);
-                                },
-                                child: Image.asset(
-                                  'assets/images/add-to-cart.png',
-                                  height: 30,
-                                  width: 30,
-                                ),
-                              )
                             ],
                           )
                         ],

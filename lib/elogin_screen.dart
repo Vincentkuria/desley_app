@@ -1,4 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:desley_app/driver_screen.dart';
 import 'package:desley_app/finance_home_screen.dart';
+import 'package:desley_app/inventory_screen.dart';
+import 'package:desley_app/supervisor_home_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,13 +28,27 @@ class _EloginState extends State<Elogin> {
     if (stored && stored2) {
       if (role == 'finance') {
         Navigator.push(
-            // ignore: use_build_context_synchronously
             context,
             MaterialPageRoute(
                 builder: (context) => FinanceHome(
                       token: value,
                     )));
-      } else {}
+      } else if (role == 'supervisor') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SupervisorHome(
+                      token: value,
+                    )));
+      } else if (role == 'driver') {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => DriverHome(token: value)));
+      } else if (role == 'inventory manager') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => InventoryHome(token: value)));
+      }
     }
   }
 
@@ -52,7 +71,6 @@ class _EloginState extends State<Elogin> {
           });
       var data = response.data['data'];
 
-      // ignore: use_build_context_synchronously
       storeValue('token', data['token'], data['role'], context);
     } on DioException catch (e) {
       if (e.response != null) {
