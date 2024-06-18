@@ -1,9 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:desley_app/Manager_screen.dart';
 import 'package:desley_app/driver_screen.dart';
 import 'package:desley_app/finance_home_screen.dart';
 import 'package:desley_app/inventory_screen.dart';
 import 'package:desley_app/supervisor_home_screen.dart';
+import 'package:desley_app/supplier_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,6 +50,14 @@ class _EloginState extends State<Elogin> {
             context,
             MaterialPageRoute(
                 builder: (context) => InventoryHome(token: value)));
+      } else if (role == 'supplier') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SupplierHome(token: value)));
+      } else if (role == 'manager') {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => ManagerHome()));
       }
     }
   }

@@ -1,8 +1,9 @@
+import 'package:desley_app/items/mydialog.dart';
 import 'package:desley_app/onboarding_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
@@ -20,12 +21,47 @@ class _InventoryHomeState extends State<InventoryHome> {
   _InventoryHomeState({required this.token});
   Map<String, dynamic> euser = {};
   List<dynamic>? data;
+  List<dynamic>? supplierdata;
+  TextEditingController controller = TextEditingController();
 
   getData() async {
     final dio = Dio();
     dio.options.baseUrl = 'http://10.0.2.2:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
+
+    try {
+      var response = await dio.get('/api/inventories-undeleted',
+          options: Options(headers: {
+            'Accept': 'application/vnd.api+json',
+            'Authorization': 'Bearer $token'
+          }));
+
+      setState(() {
+        data = response.data['data'];
+      });
+      print('heloooooooo');
+      print(response);
+      // ignore: unused_catch_clause
+    } on DioException catch (e) {
+      dynamic error = e.response?.data;
+      print(error);
+    }
+
+    try {
+      var response = await dio.get('/api/suppliers',
+          options: Options(headers: {
+            'Accept': 'application/vnd.api+json',
+            'Authorization': 'Bearer $token'
+          }));
+
+      setState(() {
+        supplierdata = response.data['data'];
+      });
+      // ignore: unused_catch_clause
+    } on DioException catch (e) {
+      // dynamic error = e.response?.data;
+    }
 
     try {
       var response = await dio.get('/api/euser',
@@ -42,6 +78,16 @@ class _InventoryHomeState extends State<InventoryHome> {
     } on DioException catch (e) {
       //dynamic error = e.response?.data;
     }
+  }
+
+  int totalRevenue() {
+    int sum = 0;
+    for (var inventory in data!) {
+      if (inventory != null) {
+        sum = sum + inventory['no_of_items'] as int;
+      }
+    }
+    return sum;
   }
 
   @override
@@ -133,190 +179,229 @@ class _InventoryHomeState extends State<InventoryHome> {
           ),
         ),
         body: SafeArea(
-            child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    gradient: const LinearGradient(colors: [
-                      Color.fromARGB(
-                        255,
-                        89,
-                        114,
-                        214,
-                      ),
-                      Color.fromARGB(255, 0, 238, 246)
-                    ], begin: Alignment.topCenter, end: Alignment.bottomCenter),
-                    borderRadius: BorderRadius.circular(10)),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            child: data == null
+                ? Center(
+                    child:
+                        Lottie.asset('assets/images/loading.json', height: 100),
+                  )
+                : Column(
                     children: [
-                      Text(
-                        'TOTAL INVENTORY',
-                        style: TextStyle(fontSize: 30),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                  colors: [
+                                    Color.fromARGB(
+                                      255,
+                                      89,
+                                      114,
+                                      214,
+                                    ),
+                                    Color.fromARGB(255, 0, 238, 246)
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter),
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'TOTAL INVENTORY',
+                                  style: TextStyle(fontSize: 30),
+                                ),
+                                Text(totalRevenue().toString(),
+                                    style: TextStyle(fontSize: 20))
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
-                      Text('90,000', style: TextStyle(fontSize: 20))
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: MaterialButton(
-                    textColor: Colors.white,
-                    color: Colors.indigo,
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Create New Item'),
-                              content: Center(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text('Inventory name'),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    TextField(
-                                      decoration: const InputDecoration(
-                                          prefixIcon:
-                                              Icon(Icons.inventory_sharp),
-                                          prefixIconColor: Colors.indigo,
-                                          hintText: 'Inventory',
-                                          border: OutlineInputBorder()),
-                                    ),
-                                    SizedBox(
-                                      height: 30,
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        MaterialButton(
-                                          onPressed: () {},
-                                          color: Colors.indigo,
-                                          minWidth: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2,
-                                          child: Text('Create'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: MaterialButton(
+                              textColor: Colors.white,
+                              color: Colors.indigo,
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('Create New Item'),
+                                        content: SingleChildScrollView(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Text('Inventory name'),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              TextField(
+                                                controller: controller,
+                                                decoration: const InputDecoration(
+                                                    prefixIcon: Icon(
+                                                        Icons.inventory_sharp),
+                                                    prefixIconColor:
+                                                        Colors.indigo,
+                                                    hintText: 'Inventory',
+                                                    border:
+                                                        OutlineInputBorder()),
+                                              ),
+                                              SizedBox(
+                                                height: 30,
+                                              ),
+                                              Center(
+                                                child: MaterialButton(
+                                                  onPressed: () async {
+                                                    final dio = Dio();
+                                                    dio.options.baseUrl =
+                                                        'http://10.0.2.2:8000';
+                                                    dio.options.connectTimeout =
+                                                        const Duration(
+                                                            seconds: 5);
+                                                    dio.options.receiveTimeout =
+                                                        const Duration(
+                                                            minutes: 1);
+
+                                                    if (controller
+                                                        .text.isEmpty) {
+                                                      return;
+                                                    }
+
+                                                    try {
+                                                      var response =
+                                                          await dio.post(
+                                                              '/api/inventories',
+                                                              data: {
+                                                                'name':
+                                                                    controller
+                                                                        .text,
+                                                                'no_of_items': 0
+                                                              },
+                                                              options: Options(
+                                                                  headers: {
+                                                                    'Accept':
+                                                                        'application/vnd.api+json',
+                                                                    'Authorization':
+                                                                        'Bearer $token'
+                                                                  }));
+                                                      print(response);
+
+                                                      setState(() {
+                                                        getData();
+                                                      });
+                                                      controller.text = '';
+                                                      Navigator.pop(context);
+                                                      // ignore: unused_catch_clause
+                                                    } on DioException catch (e) {
+                                                      dynamic error =
+                                                          e.response?.data;
+                                                      print(error);
+                                                    }
+                                                  },
+                                                  color: Colors.indigo,
+                                                  minWidth:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width /
+                                                          2,
+                                                  child: Text('Create'),
+                                                ),
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      ],
-                                    )
+                                      );
+                                    });
+                              },
+                              child: Text('+ add'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                            itemCount: data!.length,
+                            itemBuilder: (context, index) {
+                              var itemdata = data![index];
+                              return ListTile(
+                                title: Row(
+                                  children: [
+                                    Text('Item: '),
+                                    Text(itemdata['name'].toString()),
                                   ],
                                 ),
-                              ),
-                            );
-                          });
-                    },
-                    child: Text('+ add'),
-                  ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: ListView.builder(
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Row(
-                        children: [Text('Item: '), Text('Milking Machine')],
-                      ),
-                      subtitle: Text('Number of items: 60'),
-                      trailing: PopupMenuButton(
-                          onSelected: (value) {
-                            if (value == 1) {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return SingleChildScrollView(
-                                      child: AlertDialog(
-                                        title: Row(
-                                          children: [
-                                            Text('Restock'),
-                                          ],
-                                        ),
-                                        content: Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text('Item: '),
-                                                Text('Milking machine'),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: 20,
-                                            ),
-                                            Text('count'),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            TextField(
-                                              decoration: const InputDecoration(
-                                                  prefixIconColor:
-                                                      Colors.indigo,
-                                                  hintText: '100',
-                                                  border: OutlineInputBorder()),
-                                            ),
-                                            SizedBox(
-                                              height: 20,
-                                            ),
-                                            Text('Supplier'),
-                                            TextField(
-                                              decoration: const InputDecoration(
-                                                  prefixIconColor:
-                                                      Colors.indigo,
-                                                  hintText:
-                                                      'wa kamjoro enterprise',
-                                                  border: OutlineInputBorder()),
-                                            ),
-                                            SizedBox(
-                                              height: 20,
-                                            ),
-                                            MaterialButton(
-                                              onPressed: () {},
-                                              color: Colors.indigo,
-                                              minWidth: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  2,
-                                              child: Text('Request restock'),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  });
-                            } else {}
-                          },
-                          itemBuilder: (context) => [
-                                PopupMenuItem(
-                                  child: Text('restock'),
-                                  value: 1,
-                                ),
-                                PopupMenuItem(
-                                  child: Text('delete'),
-                                  value: 2,
-                                ) //Todo change status manager:delete
-                              ]),
-                    );
-                  }),
-            )
-          ],
-        )),
+                                subtitle: Text(
+                                    'Number of items: ${itemdata['no_of_items']}'),
+                                trailing: PopupMenuButton(
+                                    onSelected: (value) async {
+                                      if (value == 1) {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return MyDialog(
+                                                supplierdata: supplierdata,
+                                                itemName: itemdata['name'],
+                                                token: token,
+                                                inventoryId: itemdata['id'],
+                                              );
+                                            });
+                                      } else {
+                                        final dio = Dio();
+                                        dio.options.baseUrl =
+                                            'http://10.0.2.2:8000';
+                                        dio.options.connectTimeout =
+                                            const Duration(seconds: 5);
+                                        dio.options.receiveTimeout =
+                                            const Duration(minutes: 1);
+
+                                        try {
+                                          // ignore: unused_local_variable
+                                          var response = await dio.post(
+                                              '/api/status-request-delete',
+                                              data: {
+                                                'deleteid': itemdata['id']
+                                              },
+                                              options: Options(headers: {
+                                                'Accept':
+                                                    'application/vnd.api+json',
+                                                'Authorization': 'Bearer $token'
+                                              }));
+
+                                          setState(() {
+                                            data!.removeAt(index);
+                                          });
+                                          // ignore: unused_catch_clause
+                                        } on DioException catch (e) {
+                                          // dynamic error = e.response?.data;
+                                        }
+                                      }
+                                    },
+                                    itemBuilder: (context) => [
+                                          PopupMenuItem(
+                                            child: Text('restock'),
+                                            value: 1,
+                                          ),
+                                          PopupMenuItem(
+                                            child: Text('delete'),
+                                            value: 2,
+                                          ) //Todo change status manager:delete
+                                        ]),
+                              );
+                            }),
+                      )
+                    ],
+                  )),
       ),
     );
   }
