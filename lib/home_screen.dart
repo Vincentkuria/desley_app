@@ -1,5 +1,6 @@
 import 'package:desley_app/cart_screen.dart';
 import 'package:desley_app/onboarding_screen.dart';
+import 'package:desley_app/verify_screen.dart';
 import 'package:desley_app/viewing_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _getSalesData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://164.90.212.129';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
@@ -86,6 +87,11 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         user = response.data['data'];
       });
+
+      if (user['verified'] == 0) {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const VerifyHome()));
+      }
 
       // ignore: unused_catch_clause
     } on DioException catch (e) {
@@ -173,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://10.0.2.2:8000';
+                    dio.options.baseUrl = 'http://164.90.212.129';
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -586,7 +592,7 @@ class MySearchDelegate extends SearchDelegate {
   @override
   void showResults(BuildContext context) async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://164.90.212.129';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';

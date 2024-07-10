@@ -26,12 +26,12 @@ class _InventoryHomeState extends State<InventoryHome> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://164.90.212.129';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
 
     try {
-      var response = await dio.get('/api/inventories-undeleted',
+      var response = await dio.get('/api/inventories-approved',
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
             'Authorization': 'Bearer $token'
@@ -144,7 +144,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://10.0.2.2:8000';
+                    dio.options.baseUrl = 'http://164.90.212.129';
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -265,7 +265,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                                                   onPressed: () async {
                                                     final dio = Dio();
                                                     dio.options.baseUrl =
-                                                        'http://10.0.2.2:8000';
+                                                        'http://164.90.212.129';
                                                     dio.options.connectTimeout =
                                                         const Duration(
                                                             seconds: 5);
@@ -359,7 +359,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                                       } else {
                                         final dio = Dio();
                                         dio.options.baseUrl =
-                                            'http://10.0.2.2:8000';
+                                            'http://164.90.212.129';
                                         dio.options.connectTimeout =
                                             const Duration(seconds: 5);
                                         dio.options.receiveTimeout =

@@ -8,6 +8,8 @@ import 'package:desley_app/inventory_screen.dart';
 import 'package:desley_app/onboarding_screen.dart';
 import 'package:desley_app/supervisor_home_screen.dart';
 import 'package:desley_app/supplier_screen.dart';
+import 'package:desley_app/verify_screen.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -41,55 +43,119 @@ class _SplashState extends State<Splash> {
       // ignore: avoid_print
       print(role);
       if (role != null) {
-        if (role == 'finance') {
+        final dio = Dio();
+        dio.options.baseUrl = 'http://164.90.212.129';
+        dio.options.connectTimeout = const Duration(seconds: 5);
+        dio.options.receiveTimeout = const Duration(minutes: 1);
+        dio.options.contentType = 'application/vnd.api+json';
+        dio.options.responseType = ResponseType.json;
+
+        Map<String, dynamic> euser = {};
+
+        try {
+          var response = await dio.get('/api/euser',
+              options: Options(headers: {
+                'Accept': 'application/vnd.api+json',
+                'Authorization': 'Bearer $token'
+              }));
+
+          euser = response.data['data'];
+
+          if (euser['status']['manager'] == 'pending') {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const VerifyHome()));
+          } else {
+            if (role == 'finance') {
+              Future.delayed(
+                  const Duration(seconds: 2),
+                  () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FinanceHome(
+                                      token: token,
+                                    )))
+                      });
+            } else if (role == 'supervisor') {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SupervisorHome(
+                            token: token,
+                          )));
+            } else if (role == 'driver') {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DriverHome(token: token)));
+            } else if (role == 'inventory manager') {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => InventoryHome(token: token)));
+            } else if (role == 'supplier') {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SupplierHome(token: token)));
+            } else if (role == 'manager') {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const ManagerHome()));
+            }
+          }
+
+          // ignore: unused_catch_clause
+        } on DioException catch (e) {
+          //dynamic error = e.response?.data;
+        }
+      } else {
+        final dio = Dio();
+        dio.options.baseUrl = 'http://164.90.212.129';
+        dio.options.connectTimeout = const Duration(seconds: 5);
+        dio.options.receiveTimeout = const Duration(minutes: 1);
+        dio.options.contentType = 'application/vnd.api+json';
+        dio.options.responseType = ResponseType.json;
+
+        Map<String, dynamic> user = {};
+
+        try {
+          var response = await dio.get('/api/user',
+              options: Options(headers: {
+                'Accept': 'application/vnd.api+json',
+                'Authorization': 'Bearer $token'
+              }));
+          user = response.data['data'];
+          // ignore: unused_catch_clause
+        } on DioException catch (e) {
+          //dynamic error = e.response?.data;
+        }
+
+        if (user['verified'] == 1) {
           Future.delayed(
-              const Duration(seconds: 2),
+              const Duration(seconds: 1),
               () => {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => FinanceHome(
+                            builder: (context) => HomeScreen(
                                   token: token,
                                 )))
                   });
-        } else if (role == 'supervisor') {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SupervisorHome(
-                        token: token,
-                      )));
-        } else if (role == 'driver') {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => DriverHome(token: token)));
-        } else if (role == 'inventory manager') {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => InventoryHome(token: token)));
-        } else if (role == 'supplier') {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SupplierHome(token: token)));
-        } else if (role == 'manager') {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ManagerHome()));
+        } else {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const VerifyHome()));
         }
-      } else {
-        //check if user is verified and send him to the verify screen
-        Future.delayed(
-            const Duration(seconds: 2),
-            () => {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HomeScreen(
-                                token: token,
-                              )))
-                });
+
+        // Future.delayed(
+        //     const Duration(seconds: 2),
+        //     () => {
+        //           Navigator.push(
+        //               context,
+        //               MaterialPageRoute(
+        //                   builder: (context) => HomeScreen(
+        //                         token: token,
+        //                       )))
+        //         });
       }
     } else {
       Future.delayed(

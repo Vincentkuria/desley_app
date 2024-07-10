@@ -1,6 +1,7 @@
 import 'package:desley_app/elogin_screen.dart';
 import 'package:desley_app/home_screen.dart';
 import 'package:desley_app/register_screen.dart';
+import 'package:desley_app/slogin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,7 +36,7 @@ class _LoginState extends State<Login> {
 
   void _loginCustomer(BuildContext context) async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://164.90.212.129';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     final data = {
@@ -158,6 +159,23 @@ class _LoginState extends State<Login> {
               },
               child: Text(
                 'click me to login as an employee',
+                style: TextStyle(color: Colors.blue[600]),
+              ),
+            ),
+            Container(
+              height: 10,
+            ),
+            Text('or'),
+            Container(
+              height: 10,
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const Slogin()));
+              },
+              child: Text(
+                'click me to login as a supplier',
                 style: TextStyle(color: Colors.blue[600]),
               ),
             ),

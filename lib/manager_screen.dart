@@ -10,6 +10,6 @@ class ManagerHome extends StatefulWidget {
 class _ManagerHomeState extends State<ManagerHome> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return const Text('Hello world');
   }
 }

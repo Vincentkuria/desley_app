@@ -2,25 +2,28 @@ import 'package:desley_app/onboarding_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// ignore: must_be_immutable
 class SupplierHome extends StatefulWidget {
   String token;
   SupplierHome({super.key, required this.token});
 
   @override
+  // ignore: no_logic_in_create_state
   State<SupplierHome> createState() => _SupplierHomeState(token: token);
 }
 
 class _SupplierHomeState extends State<SupplierHome> {
   String token;
-  Map<String, dynamic> euser = {};
+  Map<String, dynamic> suser = {};
   List<dynamic>? data;
   _SupplierHomeState({required this.token});
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://164.90.212.129';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
 
@@ -33,21 +36,23 @@ class _SupplierHomeState extends State<SupplierHome> {
 
       setState(() {
         data = response.data['data'];
+        print(data);
       });
       // ignore: unused_catch_clause
     } on DioException catch (e) {
-      // dynamic error = e.response?.data;
+      dynamic error = e.response?.data;
+      print(error);
     }
 
     try {
-      var response = await dio.get('/api/euser',
+      var response = await dio.get('/api/suser',
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
             'Authorization': 'Bearer $token'
           }));
 
       setState(() {
-        euser = response.data['data'];
+        suser = response.data['data'];
       });
 
       // ignore: unused_catch_clause
@@ -93,14 +98,14 @@ class _SupplierHomeState extends State<SupplierHome> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '${euser['first_name']}' ' ' '${euser['last_name']}',
+                          '${suser['company_name']}',
                           style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 30,
                               color: Colors.white),
                         ),
                         Text(
-                          '${euser['email']}',
+                          '${suser['email']}',
                           style: TextStyle(color: Colors.indigo[200]),
                         )
                       ],
@@ -110,7 +115,7 @@ class _SupplierHomeState extends State<SupplierHome> {
                   child: MaterialButton(
                     onPressed: () async {
                       final dio = Dio();
-                      dio.options.baseUrl = 'http://10.0.2.2:8000';
+                      dio.options.baseUrl = 'http://164.90.212.129';
                       dio.options.connectTimeout = const Duration(seconds: 5);
                       dio.options.receiveTimeout = const Duration(minutes: 1);
                       dio.options.contentType = 'application/vnd.api+json';
@@ -144,7 +149,68 @@ class _SupplierHomeState extends State<SupplierHome> {
               ],
             ),
           ),
-          body: Text(data.toString()),
+          body: data == null
+              ? Center(
+                  child:
+                      Lottie.asset('assets/images/loading.json', height: 100))
+              : ListView.builder(
+                  itemCount: data!.length,
+                  itemBuilder: (context, index) {
+                    var itemdata = data![index];
+                    var inventory = itemdata['inventory'];
+                    return ListTile(
+                      title: Row(
+                        children: [
+                          const Text(
+                            'Item: ',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(inventory['name'])
+                        ],
+                      ),
+                      subtitle:
+                          Text('Number of items: ${inventory['no_of_items']}'),
+                      trailing: PopupMenuButton(
+                          onSelected: (value) async {
+                            if (value == 1) {
+                              final dio = Dio();
+                              dio.options.baseUrl = 'http://164.90.212.129';
+                              dio.options.connectTimeout =
+                                  const Duration(seconds: 5);
+                              dio.options.receiveTimeout =
+                                  const Duration(minutes: 1);
+
+                              try {
+                                // ignore: unused_local_variable
+                                var response = await dio.post(
+                                    '/api/inventory-delivered',
+                                    data: {
+                                      'inventory_id': inventory['id'],
+                                      'no_of_items': itemdata['count'],
+                                      'suptransaction_id': itemdata['id']
+                                    },
+                                    options: Options(headers: {
+                                      'Accept': 'application/vnd.api+json',
+                                      'Authorization': 'Bearer $token'
+                                    }));
+                                setState(() {
+                                  data!.removeAt(index);
+                                });
+                                // ignore: unused_catch_clause
+                              } on DioException catch (e) {
+                                // dynamic error = e.response?.data;
+                                // print(error);
+                              }
+                            }
+                          },
+                          itemBuilder: (context) => [
+                                const PopupMenuItem(
+                                  value: 1,
+                                  child: Text('mark as delivered'),
+                                ),
+                              ]),
+                    );
+                  }),
         ));
   }
 }
