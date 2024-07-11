@@ -34,6 +34,8 @@ class _ViewingState extends State<Viewing> {
     dio.options.responseType = ResponseType.json;
 
     Map<String, dynamic> data;
+    print(viewtype);
+
     if (viewtype == 'equipments') {
       data = {
         'equipment_id': id,
@@ -48,19 +50,24 @@ class _ViewingState extends State<Viewing> {
       };
     }
 
+    print(data);
+
     try {
+      print('start http');
       // ignore: unused_local_variable
-      var dioresponse = await dio.post('/api/cart/store',
+      var dioresponse = await dio.post('/api/cartitems',
           data: data,
           options: Options(headers: {
             'Accept': 'application/vnd.api+json',
             'Authorization': 'Bearer $token'
           }));
-
+      print('end http');
+      print(dioresponse.data);
       // print(dioresponse);
       // ignore: unused_catch_clause
     } on DioException catch (e) {
-      // dynamic error = e.response?.data;
+      print('failled');
+      dynamic error = e.response?.data;
     }
   }
 

@@ -296,7 +296,8 @@ class _CartState extends State<Cart> {
                               onPressed: () {
                                 if (totalPrice() > 0 &&
                                     controller.text.isNotEmpty &&
-                                    addressController.text.isNotEmpty) {
+                                    addressController.text.isNotEmpty &&
+                                    controller.text.length >= 10) {
                                   sendPayment();
                                 }
                               },
@@ -420,6 +421,16 @@ class _CartState extends State<Cart> {
                                   padding:
                                       const EdgeInsets.only(left: 4, right: 4),
                                   child: Text('$count'),
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  _addCart(id, count);
+                                },
+                                child: Image.asset(
+                                  'assets/images/add-to-cart.png',
+                                  height: 30,
+                                  width: 30,
                                 ),
                               ),
                               Container(
