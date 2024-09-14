@@ -26,7 +26,7 @@ class _InventoryHomeState extends State<InventoryHome> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://164.90.212.129';
+    dio.options.baseUrl = 'http://10.0.2.2:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
 
@@ -40,12 +40,10 @@ class _InventoryHomeState extends State<InventoryHome> {
       setState(() {
         data = response.data['data'];
       });
-      print('heloooooooo');
-      print(response);
       // ignore: unused_catch_clause
     } on DioException catch (e) {
-      dynamic error = e.response?.data;
-      print(error);
+      // dynamic error = e.response?.data;
+      // print(error);
     }
 
     try {
@@ -144,7 +142,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://164.90.212.129';
+                    dio.options.baseUrl = 'http://10.0.2.2:8000';
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -209,12 +207,12 @@ class _InventoryHomeState extends State<InventoryHome> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   'TOTAL INVENTORY',
                                   style: TextStyle(fontSize: 30),
                                 ),
                                 Text(totalRevenue().toString(),
-                                    style: TextStyle(fontSize: 20))
+                                    style: const TextStyle(fontSize: 20))
                               ],
                             ),
                           ),
@@ -233,17 +231,17 @@ class _InventoryHomeState extends State<InventoryHome> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: Text('Create New Item'),
+                                        title: const Text('Create New Item'),
                                         content: SingleChildScrollView(
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 10,
                                               ),
-                                              Text('Inventory name'),
-                                              SizedBox(
+                                              const Text('Inventory name'),
+                                              const SizedBox(
                                                 height: 10,
                                               ),
                                               TextField(
@@ -257,7 +255,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                                                     border:
                                                         OutlineInputBorder()),
                                               ),
-                                              SizedBox(
+                                              const SizedBox(
                                                 height: 30,
                                               ),
                                               Center(
@@ -265,7 +263,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                                                   onPressed: () async {
                                                     final dio = Dio();
                                                     dio.options.baseUrl =
-                                                        'http://164.90.212.129';
+                                                        'http://10.0.2.2:8000';
                                                     dio.options.connectTimeout =
                                                         const Duration(
                                                             seconds: 5);
@@ -279,6 +277,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                                                     }
 
                                                     try {
+                                                      // ignore: unused_local_variable
                                                       var response =
                                                           await dio.post(
                                                               '/api/inventories',
@@ -295,18 +294,17 @@ class _InventoryHomeState extends State<InventoryHome> {
                                                                     'Authorization':
                                                                         'Bearer $token'
                                                                   }));
-                                                      print(response);
 
                                                       setState(() {
                                                         getData();
                                                       });
                                                       controller.text = '';
+                                                      // ignore: use_build_context_synchronously
                                                       Navigator.pop(context);
                                                       // ignore: unused_catch_clause
                                                     } on DioException catch (e) {
-                                                      dynamic error =
-                                                          e.response?.data;
-                                                      print(error);
+                                                      // dynamic error =
+                                                      //     e.response?.data;
                                                     }
                                                   },
                                                   color: Colors.indigo,
@@ -315,7 +313,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                                                               .size
                                                               .width /
                                                           2,
-                                                  child: Text('Create'),
+                                                  child: const Text('Create'),
                                                 ),
                                               )
                                             ],
@@ -324,7 +322,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                                       );
                                     });
                               },
-                              child: Text('+ add'),
+                              child: const Text('+ add'),
                             ),
                           ),
                         ],
@@ -337,7 +335,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                               return ListTile(
                                 title: Row(
                                   children: [
-                                    Text('Item: '),
+                                    const Text('Item: '),
                                     Text(itemdata['name'].toString()),
                                   ],
                                 ),
@@ -359,7 +357,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                                       } else {
                                         final dio = Dio();
                                         dio.options.baseUrl =
-                                            'http://164.90.212.129';
+                                            'http://10.0.2.2:8000';
                                         dio.options.connectTimeout =
                                             const Duration(seconds: 5);
                                         dio.options.receiveTimeout =
@@ -387,14 +385,14 @@ class _InventoryHomeState extends State<InventoryHome> {
                                         }
                                       }
                                     },
-                                    itemBuilder: (context) => [
+                                    itemBuilder: (context) => const [
                                           PopupMenuItem(
-                                            child: Text('restock'),
                                             value: 1,
+                                            child: Text('restock'),
                                           ),
                                           PopupMenuItem(
-                                            child: Text('delete'),
                                             value: 2,
+                                            child: Text('delete'),
                                           ) //Todo change status manager:delete
                                         ]),
                               );

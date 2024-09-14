@@ -44,7 +44,7 @@ class _SplashState extends State<Splash> {
       print(role);
       if (role != null) {
         final dio = Dio();
-        dio.options.baseUrl = 'http://164.90.212.129';
+        dio.options.baseUrl = 'http://10.0.2.2:8000';
         dio.options.connectTimeout = const Duration(seconds: 5);
         dio.options.receiveTimeout = const Duration(minutes: 1);
         dio.options.contentType = 'application/vnd.api+json';
@@ -99,8 +99,12 @@ class _SplashState extends State<Splash> {
                   MaterialPageRoute(
                       builder: (context) => SupplierHome(token: token)));
             } else if (role == 'manager') {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const ManagerHome()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ManagerHome(
+                            token: token,
+                          )));
             }
           }
 
@@ -110,7 +114,7 @@ class _SplashState extends State<Splash> {
         }
       } else {
         final dio = Dio();
-        dio.options.baseUrl = 'http://164.90.212.129';
+        dio.options.baseUrl = 'http://10.0.2.2:8000';
         dio.options.connectTimeout = const Duration(seconds: 5);
         dio.options.receiveTimeout = const Duration(minutes: 1);
         dio.options.contentType = 'application/vnd.api+json';

@@ -56,15 +56,15 @@ class _EloginState extends State<Elogin> {
             MaterialPageRoute(
                 builder: (context) => SupplierHome(token: value)));
       } else if (role == 'manager') {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => ManagerHome()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => ManagerHome(token: value)));
       }
     }
   }
 
   loginEmployee() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://164.90.212.129';
+    dio.options.baseUrl = 'http://10.0.2.2:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';

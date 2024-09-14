@@ -25,7 +25,7 @@ class _SupervisorHomeState extends State<SupervisorHome> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://164.90.212.129';
+    dio.options.baseUrl = 'http://10.0.2.2:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
@@ -136,7 +136,7 @@ class _SupervisorHomeState extends State<SupervisorHome> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://164.90.212.129';
+                    dio.options.baseUrl = 'http://10.0.2.2:8000';
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -257,7 +257,7 @@ class _SupervisorHomeState extends State<SupervisorHome> {
                                                                       Dio();
                                                                   dio.options
                                                                           .baseUrl =
-                                                                      'http://164.90.212.129';
+                                                                      'http://10.0.2.2:8000';
                                                                   dio.options
                                                                           .connectTimeout =
                                                                       const Duration(
@@ -325,6 +325,8 @@ class _SupervisorHomeState extends State<SupervisorHome> {
                                                                         error =
                                                                         e.response
                                                                             ?.data;
+                                                                    print(
+                                                                        error);
                                                                   }
                                                                 },
                                                                 child: const Text(
@@ -350,8 +352,7 @@ class _SupervisorHomeState extends State<SupervisorHome> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
-                                      Text(itemdata['service']
-                                              ['shipping_address']
+                                      Text(itemdata['shipping_address']
                                           .toString())
                                     ],
                                   ),

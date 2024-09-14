@@ -35,7 +35,7 @@ class _FinanceHomeState extends State<FinanceHome> {
 
   getPaymentsData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://164.90.212.129';
+    dio.options.baseUrl = 'http://10.0.2.2:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
@@ -108,7 +108,7 @@ class _FinanceHomeState extends State<FinanceHome> {
 
   Future<bool> approvePayment(int id) async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://164.90.212.129';
+    dio.options.baseUrl = 'http://10.0.2.2:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
@@ -200,7 +200,7 @@ class _FinanceHomeState extends State<FinanceHome> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://164.90.212.129';
+                    dio.options.baseUrl = 'http://10.0.2.2:8000';
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -786,7 +786,7 @@ class MySearchDelegate extends SearchDelegate {
   @override
   void showResults(BuildContext context) async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://164.90.212.129';
+    dio.options.baseUrl = 'http://10.0.2.2:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
