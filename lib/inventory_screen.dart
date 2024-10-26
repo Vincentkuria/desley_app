@@ -26,7 +26,7 @@ class _InventoryHomeState extends State<InventoryHome> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://165.22.123.187';
+    dio.options.baseUrl = 'http://10.0.2.2:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
 
@@ -142,7 +142,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://165.22.123.187';
+                    dio.options.baseUrl = 'http://10.0.2.2:8000';
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -263,7 +263,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                                                   onPressed: () async {
                                                     final dio = Dio();
                                                     dio.options.baseUrl =
-                                                        'http://165.22.123.187';
+                                                        'http://10.0.2.2:8000';
                                                     dio.options.connectTimeout =
                                                         const Duration(
                                                             seconds: 5);
@@ -357,7 +357,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                                       } else {
                                         final dio = Dio();
                                         dio.options.baseUrl =
-                                            'http://165.22.123.187';
+                                            'http://10.0.2.2:8000';
                                         dio.options.connectTimeout =
                                             const Duration(seconds: 5);
                                         dio.options.receiveTimeout =

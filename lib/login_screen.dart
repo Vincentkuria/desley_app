@@ -36,7 +36,7 @@ class _LoginState extends State<Login> {
 
   void _loginCustomer(BuildContext context) async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://165.22.123.187';
+    dio.options.baseUrl = 'http://10.0.2.2:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     final data = {
