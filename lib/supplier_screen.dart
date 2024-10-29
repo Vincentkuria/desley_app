@@ -1,4 +1,5 @@
 import 'package:desley_app/onboarding_screen.dart';
+import 'package:desley_app/supplier_billings.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -145,7 +146,18 @@ class _SupplierHomeState extends State<SupplierHome> {
                     textColor: Colors.white,
                     child: const Text('Logout'),
                   ),
-                )
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SupplierBilling(
+                                  token: token,
+                                )),
+                      );
+                    },
+                    child: const Text('My billings'))
               ],
             ),
           ),
@@ -192,9 +204,22 @@ class _SupplierHomeState extends State<SupplierHome> {
                                       'Accept': 'application/vnd.api+json',
                                       'Authorization': 'Bearer $token'
                                     }));
+
+                                //store payment info for finance approval
+                                await dio.post('/api/payments',
+                                    data: {
+                                      'amount':
+                                          itemdata['count'] * itemdata['price']
+                                    },
+                                    options: Options(headers: {
+                                      'Accept': 'application/vnd.api+json',
+                                      'Authorization': 'Bearer $token'
+                                    }));
+
                                 setState(() {
                                   data!.removeAt(index);
                                 });
+
                                 // ignore: unused_catch_clause
                               } on DioException catch (e) {
                                 // dynamic error = e.response?.data;

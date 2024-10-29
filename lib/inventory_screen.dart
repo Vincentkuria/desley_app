@@ -333,6 +333,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                             itemBuilder: (context, index) {
                               var itemdata = data![index];
                               return ListTile(
+                                isThreeLine: true,
                                 title: Row(
                                   children: [
                                     const Text('Item: '),
@@ -340,7 +341,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                                   ],
                                 ),
                                 subtitle: Text(
-                                    'Number of items: ${itemdata['no_of_items']}'),
+                                    'Number of items: ${itemdata['no_of_items']} \nPrice: ${itemdata['price']}'),
                                 trailing: PopupMenuButton(
                                     onSelected: (value) async {
                                       if (value == 1) {

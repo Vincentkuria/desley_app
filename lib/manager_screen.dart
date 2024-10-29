@@ -336,6 +336,8 @@ class _ManagerHomeState extends State<ManagerHome> {
                               itemCount: data2!.length,
                               itemBuilder: (context, index) {
                                 var dataItem = data2?[index];
+                                final TextEditingController controller =
+                                    TextEditingController();
                                 return ListTile(
                                   title: Text(dataItem['name']),
                                   trailing: PopupMenuButton(
@@ -353,21 +355,82 @@ class _ManagerHomeState extends State<ManagerHome> {
                                             ResponseType.json;
                                         if (value == 1) {
                                           try {
-                                            // ignore: unused_local_variable
-                                            var response = await dio.post(
-                                                '/api/approve-inventories',
-                                                data: {'id': dataItem['id']},
-                                                options: Options(headers: {
-                                                  'Accept':
-                                                      'application/vnd.api+json',
-                                                  'Authorization':
-                                                      'Bearer $token'
-                                                }));
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title: const Text(
+                                                        'Agreed Price'),
+                                                    content: TextField(
+                                                      controller: controller,
+                                                      keyboardType:
+                                                          TextInputType.number,
+                                                      decoration:
+                                                          InputDecoration(
+                                                        hintText:
+                                                            'Enter the price',
+                                                      ),
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop(); // Close the dialog without any value
+                                                        },
+                                                        child: Text('Cancel'),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          int? value =
+                                                              int.tryParse(
+                                                                  controller
+                                                                      .text);
+                                                          if (value != null) {
+                                                            // Pass the integer back
+                                                            // ignore: unused_local_variable
+                                                            var response =
+                                                                await dio.post(
+                                                                    '/api/approve-inventories',
+                                                                    data: {
+                                                                      'id': dataItem[
+                                                                          'id'],
+                                                                      'price':
+                                                                          value
+                                                                    },
+                                                                    options:
+                                                                        Options(
+                                                                            headers: {
+                                                                          'Accept':
+                                                                              'application/vnd.api+json',
+                                                                          'Authorization':
+                                                                              'Bearer $token'
+                                                                        }));
 
-                                            setState(() {
-                                              data2!.removeAt(index);
-                                            });
-                                            print(response.data);
+                                                            setState(() {
+                                                              data2!.removeAt(
+                                                                  index);
+                                                            });
+                                                            print(
+                                                                response.data);
+
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          } else {
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                              SnackBar(
+                                                                  content: Text(
+                                                                      "Please enter a valid integer")),
+                                                            );
+                                                          }
+                                                        },
+                                                        child: Text('Approve'),
+                                                      ),
+                                                    ],
+                                                  );
+                                                });
 
                                             // ignore: unused_catch_clause
                                           } on DioException catch (e) {
@@ -400,7 +463,8 @@ class _ManagerHomeState extends State<ManagerHome> {
                                       itemBuilder: (context) => [
                                             PopupMenuItem(
                                                 value: 1,
-                                                child: Text('Approve')),
+                                                child: Text(
+                                                    'set buying price and Approve')),
                                             PopupMenuItem(
                                                 value: 2, child: Text('Cancel'))
                                           ]),

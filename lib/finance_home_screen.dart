@@ -274,7 +274,7 @@ class _FinanceHomeState extends State<FinanceHome> {
                                     style: TextStyle(fontSize: 60),
                                   ),
                                   Text(
-                                    'Ksh $total',
+                                    'Ksh ${total < 0 ? 0 : total}',
                                     style: const TextStyle(fontSize: 20),
                                   )
                                 ],
@@ -312,7 +312,13 @@ class _FinanceHomeState extends State<FinanceHome> {
                                         'DEDUCTIONS',
                                         style: TextStyle(fontSize: 15),
                                       ),
-                                      Text('Ksh $monthlyDeductions',
+                                      Text(
+                                          'Ksh ' +
+                                              (monthlyDeductions! < 0
+                                                  ? (monthlyDeductions! * -1)
+                                                      .toString()
+                                                  : monthlyDeductions
+                                                      .toString()),
                                           style: const TextStyle(fontSize: 20))
                                     ],
                                   ),
