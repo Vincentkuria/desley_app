@@ -3,17 +3,24 @@ import 'package:flutter/material.dart';
 
 class PaymentInfo extends StatefulWidget {
   final String token;
-  // ignore: prefer_const_constructors_in_immutables
-  PaymentInfo({super.key, required this.token});
+  final bool ordertype;
+  final bool ordertype2;
+
+  const PaymentInfo(
+      {super.key,
+      required this.token,
+      required this.ordertype,
+      required this.ordertype2});
 
   @override
-  // ignore: no_logic_in_create_state
-  State<PaymentInfo> createState() => _PaymentInfoState(token: token);
+  State<PaymentInfo> createState() => _PaymentInfoState();
 }
 
 class _PaymentInfoState extends State<PaymentInfo> {
-  String token;
-  _PaymentInfoState({required this.token});
+  late String token = widget.token;
+  late bool ordertype = widget.ordertype;
+  late bool ordertype2 = widget.ordertype2;
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -47,15 +54,45 @@ class _PaymentInfoState extends State<PaymentInfo> {
                   width: 100,
                   fit: BoxFit.contain,
                 ),
-                Text(
-                  'Order received successfully',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.green[700],
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                ordertype && ordertype2
+                    ? Text(
+                        'Service request and Order received successfully',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.green[700],
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : SizedBox(
+                        height: 0,
+                      ),
+                ordertype && !ordertype2
+                    ? Text(
+                        'Service received successfully',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.green[700],
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : SizedBox(
+                        height: 0,
+                      ),
+                !ordertype
+                    ? Text(
+                        'Order received successfully',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.green[700],
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : SizedBox(
+                        height: 0,
+                      ),
                 const SizedBox(
                   height: 150,
                 ),

@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, prefer_interpolation_to_compose_strings
 
+import 'package:desley_app/feedback_message.dart';
 import 'package:desley_app/onboarding_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,7 @@ class _FinanceHomeState extends State<FinanceHome> {
 
   getPaymentsData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
@@ -108,7 +109,7 @@ class _FinanceHomeState extends State<FinanceHome> {
 
   Future<bool> approvePayment(int id) async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
@@ -200,7 +201,7 @@ class _FinanceHomeState extends State<FinanceHome> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://10.0.2.2:8000';
+                    dio.options.baseUrl = 'http://192.168.100.3:8000';
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -230,7 +231,16 @@ class _FinanceHomeState extends State<FinanceHome> {
                   textColor: Colors.white,
                   child: const Text('Logout'),
                 ),
-              )
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                FeedbackMessageScreen(token: token)));
+                  },
+                  child: Text('Feedback')),
             ],
           ),
         ),
@@ -792,7 +802,7 @@ class MySearchDelegate extends SearchDelegate {
   @override
   void showResults(BuildContext context) async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';

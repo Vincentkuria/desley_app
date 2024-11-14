@@ -24,7 +24,7 @@ class _SupplierHomeState extends State<SupplierHome> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
 
@@ -116,7 +116,7 @@ class _SupplierHomeState extends State<SupplierHome> {
                   child: MaterialButton(
                     onPressed: () async {
                       final dio = Dio();
-                      dio.options.baseUrl = 'http://10.0.2.2:8000';
+                      dio.options.baseUrl = 'http://192.168.100.3:8000';
                       dio.options.connectTimeout = const Duration(seconds: 5);
                       dio.options.receiveTimeout = const Duration(minutes: 1);
                       dio.options.contentType = 'application/vnd.api+json';
@@ -149,6 +149,7 @@ class _SupplierHomeState extends State<SupplierHome> {
                 ),
                 TextButton(
                     onPressed: () {
+                      Navigator.pop(context);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -185,7 +186,7 @@ class _SupplierHomeState extends State<SupplierHome> {
                           onSelected: (value) async {
                             if (value == 1) {
                               final dio = Dio();
-                              dio.options.baseUrl = 'http://10.0.2.2:8000';
+                              dio.options.baseUrl = 'http://192.168.100.3:8000';
                               dio.options.connectTimeout =
                                   const Duration(seconds: 5);
                               dio.options.receiveTimeout =

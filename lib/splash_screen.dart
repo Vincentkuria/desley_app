@@ -6,6 +6,8 @@ import 'package:desley_app/finance_home_screen.dart';
 import 'package:desley_app/home_screen.dart';
 import 'package:desley_app/inventory_screen.dart';
 import 'package:desley_app/onboarding_screen.dart';
+import 'package:desley_app/service_manager.dart';
+import 'package:desley_app/serviceworker.dart';
 import 'package:desley_app/supervisor_home_screen.dart';
 import 'package:desley_app/supplier_screen.dart';
 import 'package:desley_app/verify_screen.dart';
@@ -44,7 +46,7 @@ class _SplashState extends State<Splash> {
       print(role);
       if (role != null) {
         final dio = Dio();
-        dio.options.baseUrl = 'http://10.0.2.2:8000';
+        dio.options.baseUrl = 'http://192.168.100.3:8000';
         dio.options.connectTimeout = const Duration(seconds: 5);
         dio.options.receiveTimeout = const Duration(minutes: 1);
         dio.options.contentType = 'application/vnd.api+json';
@@ -105,6 +107,16 @@ class _SplashState extends State<Splash> {
                       builder: (context) => ManagerHome(
                             token: token,
                           )));
+            } else if (role == 'service manager') {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ServiceManager(token: token)));
+            } else if (role == 'service') {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ServiceWorker(token: token)));
             }
           }
 
@@ -114,7 +126,7 @@ class _SplashState extends State<Splash> {
         }
       } else {
         final dio = Dio();
-        dio.options.baseUrl = 'http://10.0.2.2:8000';
+        dio.options.baseUrl = 'http://192.168.100.3:8000';
         dio.options.connectTimeout = const Duration(seconds: 5);
         dio.options.receiveTimeout = const Duration(minutes: 1);
         dio.options.contentType = 'application/vnd.api+json';

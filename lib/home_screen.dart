@@ -1,4 +1,6 @@
+import 'package:desley_app/aboutus.dart';
 import 'package:desley_app/cart_screen.dart';
+import 'package:desley_app/feedback_screen.dart';
 import 'package:desley_app/onboarding_screen.dart';
 import 'package:desley_app/verify_screen.dart';
 import 'package:desley_app/viewing_screen.dart';
@@ -32,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _getSalesData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
@@ -179,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://10.0.2.2:8000';
+                    dio.options.baseUrl = 'http://192.168.100.3:8000';
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -209,7 +211,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   textColor: Colors.white,
                   child: const Text('Logout'),
                 ),
-              )
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => Aboutus()));
+                  },
+                  child: Text('About Us')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                FeedbackScreen(token: token)));
+                  },
+                  child: Text('Feedback')),
             ],
           ),
         ),
@@ -494,12 +511,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                                 Column(
                                                   children: [
-                                                    const Text('70,000',
-                                                        style: TextStyle(
-                                                            fontSize: 10,
-                                                            decoration:
-                                                                TextDecoration
-                                                                    .lineThrough)),
                                                     Text(
                                                       toMoney.format(
                                                           services[index]
@@ -507,12 +518,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.w700),
-                                                    )
+                                                    ),
                                                   ],
                                                 )
                                               ],
                                             ),
-                                          )
+                                          ),
+                                          const Text('per team(5)/hour',
+                                              style: TextStyle(
+                                                fontSize: 10,
+                                              )),
                                         ],
                                       ),
                                     )
@@ -592,7 +607,7 @@ class MySearchDelegate extends SearchDelegate {
   @override
   void showResults(BuildContext context) async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';

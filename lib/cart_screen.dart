@@ -1,5 +1,4 @@
 // ignore_for_file: empty_catches
-
 import 'package:desley_app/paymentinfo_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,6 +18,9 @@ class Cart extends StatefulWidget {
 class _CartState extends State<Cart> {
   final String token;
   List<dynamic>? data;
+  bool ordertype = false; //true with service false without service
+  bool ordertype2 = false;
+  //true with service + other, false meaning service only without other
   _CartState({required this.token});
 
   var toMoney = NumberFormat("#,##0.00", "en_US");
@@ -27,7 +29,7 @@ class _CartState extends State<Cart> {
   void _getCartItems() async {
     final dio1 = Dio();
     data = null;
-    dio1.options.baseUrl = 'http://10.0.2.2:8000';
+    dio1.options.baseUrl = 'http://192.168.100.3:8000';
     dio1.options.connectTimeout = const Duration(seconds: 5);
     dio1.options.receiveTimeout = const Duration(minutes: 1);
     dio1.options.contentType = 'application/vnd.api+json';
@@ -53,7 +55,7 @@ class _CartState extends State<Cart> {
 
   void _removeCart(item, currentCount) async {
     final dio2 = Dio();
-    dio2.options.baseUrl = 'http://10.0.2.2:8000';
+    dio2.options.baseUrl = 'http://192.168.100.3:8000';
     dio2.options.connectTimeout = const Duration(seconds: 5);
     dio2.options.receiveTimeout = const Duration(minutes: 1);
     dio2.options.contentType = 'application/vnd.api+json';
@@ -80,7 +82,7 @@ class _CartState extends State<Cart> {
 
   void _addCart(item, currentCount) async {
     final dio3 = Dio();
-    dio3.options.baseUrl = 'http://10.0.2.2:8000';
+    dio3.options.baseUrl = 'http://192.168.100.3:8000';
     dio3.options.connectTimeout = const Duration(seconds: 5);
     dio3.options.receiveTimeout = const Duration(minutes: 1);
     dio3.options.contentType = 'application/vnd.api+json';
@@ -107,7 +109,7 @@ class _CartState extends State<Cart> {
 
   void deletCartItem(item) async {
     final dio4 = Dio();
-    dio4.options.baseUrl = 'http://10.0.2.2:8000';
+    dio4.options.baseUrl = 'http://192.168.100.3:8000';
     dio4.options.connectTimeout = const Duration(seconds: 5);
     dio4.options.receiveTimeout = const Duration(minutes: 1);
     dio4.options.contentType = 'application/vnd.api+json';
@@ -138,18 +140,39 @@ class _CartState extends State<Cart> {
       return 0.00;
     }
     double checkoutPrice = 0;
+    bool eq = false;
+    bool sp = false;
+    bool ser = false;
     for (var i = 0; i < data!.length; i++) {
       var itemType = '';
       if (data![i]['equipment'] != null) {
         itemType = 'equipment';
+        if (!eq) {
+          eq = true;
+        }
       } else if (data![i]['service'] != null) {
         itemType = 'service';
+        if (!ser) {
+          ser = true;
+        }
       } else {
         itemType = 'spare';
+        if (!sp) {
+          sp = true;
+        }
       }
       int count = data![i]['count'];
       dynamic price = data![i][itemType]['price'] * count;
       checkoutPrice = checkoutPrice + price;
+    }
+
+    if (ser) {
+      ordertype = true;
+      if (sp || eq) {
+        ordertype2 = true;
+      }
+    } else {
+      ordertype = false;
     }
     return checkoutPrice;
   }
@@ -157,7 +180,7 @@ class _CartState extends State<Cart> {
   void sendPayment() async {
     int paymentId;
     var dio5 = Dio();
-    dio5.options.baseUrl = 'http://10.0.2.2:8000';
+    dio5.options.baseUrl = 'http://192.168.100.3:8000';
     dio5.options.connectTimeout = const Duration(seconds: 5);
     dio5.options.receiveTimeout = const Duration(minutes: 1);
     dio5.options.contentType = 'application/vnd.api+json';
@@ -174,8 +197,14 @@ class _CartState extends State<Cart> {
       paymentId = response.data['data']['id'];
       writeTransaction(paymentId);
       // ignore: use_build_context_synchronously
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => PaymentInfo(token: token)));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => PaymentInfo(
+                    token: token,
+                    ordertype: ordertype,
+                    ordertype2: ordertype2,
+                  )));
     } catch (e) {}
 
     //write to customer transactions
@@ -183,7 +212,7 @@ class _CartState extends State<Cart> {
 
   writeTransaction(int paymentId) async {
     var dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';

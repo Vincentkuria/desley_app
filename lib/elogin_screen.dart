@@ -4,6 +4,8 @@ import 'package:desley_app/Manager_screen.dart';
 import 'package:desley_app/driver_screen.dart';
 import 'package:desley_app/finance_home_screen.dart';
 import 'package:desley_app/inventory_screen.dart';
+import 'package:desley_app/service_manager.dart';
+import 'package:desley_app/serviceworker.dart';
 import 'package:desley_app/supervisor_home_screen.dart';
 import 'package:desley_app/supplier_screen.dart';
 import 'package:dio/dio.dart';
@@ -58,13 +60,23 @@ class _EloginState extends State<Elogin> {
       } else if (role == 'manager') {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => ManagerHome(token: value)));
+      } else if (role == 'service manager') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ServiceManager(token: value)));
+      } else if (role == 'service') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ServiceWorker(token: value)));
       }
     }
   }
 
   loginEmployee() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';

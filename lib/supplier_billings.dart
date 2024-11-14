@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:desley_app/onboarding_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:pdf/pdf.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class SupplierBilling extends StatefulWidget {
   const SupplierBilling({super.key, required this.token});
@@ -19,7 +25,7 @@ class _SupplierBillingState extends State<SupplierBilling> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://10.0.2.2:8000';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
 
@@ -103,7 +109,7 @@ class _SupplierBillingState extends State<SupplierBilling> {
               child: MaterialButton(
                 onPressed: () async {
                   final dio = Dio();
-                  dio.options.baseUrl = 'http://10.0.2.2:8000';
+                  dio.options.baseUrl = 'http://192.168.100.3:8000';
                   dio.options.connectTimeout = const Duration(seconds: 5);
                   dio.options.receiveTimeout = const Duration(minutes: 1);
                   dio.options.contentType = 'application/vnd.api+json';
@@ -224,8 +230,163 @@ class _SupplierBillingState extends State<SupplierBilling> {
                                         minWidth:
                                             MediaQuery.of(context).size.width,
                                         color: Colors.green,
-                                        onPressed: () {},
-                                        child: const Text('View receipt'),
+                                        onPressed: () async {
+                                          const click = 0;
+                                          if (click < 1) {
+                                            // design pdf
+
+                                            final pdf = pw.Document();
+                                            final imageLogo = pw.MemoryImage(
+                                              (await rootBundle.load(
+                                                      'assets/images/logo.png'))
+                                                  .buffer
+                                                  .asUint8List(),
+                                            );
+
+                                            // Date formatting
+                                            final createdAt = DateTime.parse(
+                                                data![index]['created_at']);
+                                            final formattedDate =
+                                                "${createdAt.day}-${createdAt.month}-${createdAt.year}";
+                                            print('started pdf vini');
+
+                                            pdf.addPage(
+                                              pw.Page(
+                                                margin:
+                                                    const pw.EdgeInsets.all(24),
+                                                build: (pw.Context context) =>
+                                                    pw.Column(
+                                                  crossAxisAlignment: pw
+                                                      .CrossAxisAlignment.start,
+                                                  children: [
+                                                    // Logo and Title
+                                                    pw.Row(
+                                                      mainAxisAlignment: pw
+                                                          .MainAxisAlignment
+                                                          .spaceBetween,
+                                                      children: [
+                                                        pw.Column(children: [
+                                                          pw.Image(imageLogo,
+                                                              height: 50),
+                                                          pw.Text('Desley',
+                                                              style: pw.TextStyle(
+                                                                  color: PdfColors
+                                                                      .blue900,
+                                                                  fontSize: 30,
+                                                                  fontWeight: pw
+                                                                      .FontWeight
+                                                                      .bold))
+                                                        ]),
+                                                        pw.Text("Receipt",
+                                                            style: pw.TextStyle(
+                                                                fontSize: 24,
+                                                                color: PdfColors
+                                                                    .blue800)),
+                                                      ],
+                                                    ),
+                                                    pw.SizedBox(height: 16),
+
+                                                    // Payment Info
+                                                    pw.Text("Payment Details",
+                                                        style: pw.TextStyle(
+                                                            fontSize: 18,
+                                                            color: PdfColors
+                                                                .blue600)),
+                                                    pw.Divider(
+                                                        color:
+                                                            PdfColors.blue600,
+                                                        thickness: 1.5),
+                                                    pw.SizedBox(height: 8),
+                                                    pw.Text(
+                                                        "Payment Code: ${data![index]['payment_code']}"),
+                                                    pw.Text(
+                                                        "Date: $formattedDate"),
+                                                    pw.SizedBox(height: 16),
+
+                                                    // Supplier Info
+                                                    pw.Text(
+                                                        "Supplier Information",
+                                                        style: pw.TextStyle(
+                                                            fontSize: 18,
+                                                            color: PdfColors
+                                                                .blue600)),
+                                                    pw.Divider(
+                                                        color:
+                                                            PdfColors.blue600,
+                                                        thickness: 1.5),
+                                                    pw.SizedBox(height: 8),
+                                                    pw.Text(
+                                                        "Company: ${data![index]['supplier']['company_name']}"),
+                                                    pw.Text(
+                                                        "Email: ${data![index]['supplier']['email']}"),
+                                                    pw.SizedBox(height: 16),
+
+                                                    // Amount and Status
+                                                    pw.Text("Amount",
+                                                        style: pw.TextStyle(
+                                                            fontSize: 18,
+                                                            color: PdfColors
+                                                                .blue600)),
+                                                    pw.Divider(
+                                                        color:
+                                                            PdfColors.blue600,
+                                                        thickness: 1.5),
+                                                    pw.SizedBox(height: 8),
+                                                    pw.Text(
+                                                        "Total Amount: ${data![index]['amount'] * -1}"),
+                                                    pw.Text(
+                                                        "Finance Status: ${data![index]['status']['finance']}"),
+
+                                                    // Footer
+                                                    pw.Spacer(),
+                                                    pw.Divider(
+                                                        color:
+                                                            PdfColors.blue600,
+                                                        thickness: 1.5),
+                                                    pw.Center(
+                                                      child: pw.Text(
+                                                        "Thank you for your business!",
+                                                        style: pw.TextStyle(
+                                                            fontSize: 14,
+                                                            color: PdfColors
+                                                                .blue600),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+
+                                            print('finished pdf vini');
+
+                                            //request permission
+                                            // if (Platform.isAndroid) {
+                                            //   if (await Permission.storage
+                                            //       .request()
+                                            //       .isDenied) {
+                                            //     print(
+                                            //         "Storage permission is required to save the file in Downloads. vini");
+                                            //     return;
+                                            //   }
+                                            // }
+
+                                            //save pdf
+                                            final downloads = Directory(
+                                                "/storage/emulated/0/Download");
+
+                                            final filepath =
+                                                '${downloads.path}/invoice.pdf';
+
+                                            final file = File(filepath);
+                                            await file
+                                                .writeAsBytes(await pdf.save());
+
+                                            //open pdf
+
+                                            await OpenFilex.open(filepath);
+                                          }
+                                        },
+                                        child: const Text('Download receipt'),
                                       ),
                                     ),
                                   )
