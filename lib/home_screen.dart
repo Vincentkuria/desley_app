@@ -524,7 +524,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ],
                                             ),
                                           ),
-                                          const Text('per team(5)/hour',
+                                          const Text('per team/hour',
                                               style: TextStyle(
                                                 fontSize: 10,
                                               )),

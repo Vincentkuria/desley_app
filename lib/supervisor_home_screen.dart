@@ -1,4 +1,5 @@
 import 'package:desley_app/onboarding_screen.dart';
+import 'package:desley_app/verify_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -75,6 +76,11 @@ class _SupervisorHomeState extends State<SupervisorHome> {
       setState(() {
         euser = response.data['data'];
       });
+
+      if (euser['status']['manager'] == 'pending') {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const VerifyHome()));
+      }
 
       // ignore: unused_catch_clause
     } on DioException catch (e) {

@@ -1,4 +1,5 @@
 import 'package:desley_app/onboarding_screen.dart';
+import 'package:desley_app/verify_screen.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,7 +20,11 @@ class _ServiceManagerState extends State<ServiceManager> {
   String token;
   Map<String, dynamic> euser = {};
   List<dynamic>? data;
+  List<dynamic>? ungroupedTechnicians;
   List<dynamic>? groupData = [];
+  List<dynamic>? isSelected = [];
+
+  var _groupInputController = TextEditingController();
 
   _ServiceManagerState({required this.token});
 
@@ -98,8 +103,32 @@ class _ServiceManagerState extends State<ServiceManager> {
         euser = response.data['data'];
       });
 
+      if (euser['status']['manager'] == 'pending') {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const VerifyHome()));
+      }
+
       // ignore: unused_catch_clause
     } on DioException catch (e) {
+      //dynamic error = e.response?.data;
+    }
+
+    // ungrouped-service-technicians
+    try {
+      var response = await dio.get('/api/ungrouped-service-technicians',
+          options: Options(headers: {
+            'Accept': 'application/vnd.api+json',
+            'Authorization': 'Bearer $token'
+          }));
+
+      setState(() {
+        ungroupedTechnicians = response.data['data'];
+        isSelected = List<bool>.filled(ungroupedTechnicians!.length, false);
+      });
+      // ignore: unused_catch_clause
+    } on DioException catch (e) {
+      dynamic error = e.response?.data;
+      print('helloeeeeeeeeeeeeeeeeeeee' + error.toString());
       //dynamic error = e.response?.data;
     }
   }
@@ -129,6 +158,70 @@ class _ServiceManagerState extends State<ServiceManager> {
           centerTitle: false,
           backgroundColor: Colors.indigo,
           iconTheme: const IconThemeData(color: Colors.white),
+          actions: [
+            MaterialButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return StatefulBuilder(
+                          builder: (context, setState) => AlertDialog(
+                              title: const Text('Groups'),
+                              content: Column(
+                                children: [
+                                  //group name
+                                  TextField(
+                                    controller: _groupInputController,
+                                    decoration: const InputDecoration(
+                                        hintText: 'Group name',
+                                        border: OutlineInputBorder()),
+                                  ),
+                                  //slect members
+                                  Text('select members of the group'),
+                                  Expanded(
+                                      child: ListView.builder(
+                                          itemCount:
+                                              ungroupedTechnicians?.length,
+                                          itemBuilder: (context, index) {
+                                            return ListTile(
+                                              leading: Checkbox(
+                                                value: isSelected?[index],
+                                                onChanged: (value) {
+                                                  setState(() => value!
+                                                      ? isSelected![index] =
+                                                          true
+                                                      : isSelected![index] =
+                                                          false);
+                                                },
+                                              ),
+                                              title: Text(
+                                                  '${ungroupedTechnicians?[index]['first_name']}'
+                                                  ' '
+                                                  '${ungroupedTechnicians?[index]['last_name']}'),
+                                            );
+                                          })),
+
+                                  MaterialButton(
+                                    onPressed: () {
+                                      if (_groupInputController.text.isEmpty &&
+                                          !isSelected!.contains(true)) {
+                                        return;
+                                      }
+
+                                      // send group data
+                                      createGroup();
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('create new group'),
+                                    color: Colors.indigo,
+                                  ),
+                                ],
+                              )),
+                        );
+                      });
+                },
+                child: const Text('groups'))
+          ],
         ),
         drawer: Container(
           width: 300,
@@ -367,5 +460,36 @@ class _ServiceManagerState extends State<ServiceManager> {
                     })),
       ),
     );
+  }
+
+  void createGroup() async {
+    final dio = Dio();
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
+    dio.options.connectTimeout = const Duration(seconds: 5);
+    dio.options.receiveTimeout = const Duration(minutes: 1);
+    dio.options.contentType = 'application/vnd.api+json';
+    dio.options.responseType = ResponseType.json;
+
+    List<int> ids = [];
+    for (int i = 0; i < ungroupedTechnicians!.length; i++) {
+      if (isSelected![i]) {
+        ids.add(ungroupedTechnicians![i]['id']);
+      }
+    }
+
+    try {
+      var response = await dio.post('/api/assign-group',
+          data: {'name': _groupInputController.text, 'membersList': ids},
+          options: Options(headers: {
+            'Accept': 'application/vnd.api+json',
+            'Authorization': 'Bearer $token'
+          }));
+
+      // ignore: unused_catch_clause
+    } on DioException catch (e) {
+      dynamic error = e.response?.data;
+      print(error);
+      //dynamic error = e.response?.data;
+    }
   }
 }

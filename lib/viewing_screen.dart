@@ -183,51 +183,6 @@ class _ViewingState extends State<Viewing> {
           Container(
             height: 20,
           ),
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text('Comments'),
-          ),
-          const Padding(
-            padding: EdgeInsets.all(20),
-            child: TextField(
-              decoration: InputDecoration(border: OutlineInputBorder()),
-            ),
-          ),
-          Container(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: MaterialButton(
-                color: Colors.indigo,
-                onPressed: () {},
-                child: const Text('post'),
-              ),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.account_circle,
-                  size: 60,
-                ),
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    width: 250,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Vincent'),
-                        Text('This is a very good machine, it serves me well')
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-          )
         ],
       ),
     );
