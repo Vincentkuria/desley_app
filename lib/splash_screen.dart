@@ -46,7 +46,7 @@ class _SplashState extends State<Splash> {
       print(role);
       if (role != null) {
         final dio = Dio();
-        dio.options.baseUrl = 'http://192.168.100.3:8000';
+        dio.options.baseUrl = 'http://138.68.154.175';
         dio.options.connectTimeout = const Duration(seconds: 5);
         dio.options.receiveTimeout = const Duration(minutes: 1);
         dio.options.contentType = 'application/vnd.api+json';
@@ -126,7 +126,7 @@ class _SplashState extends State<Splash> {
         }
       } else {
         final dio = Dio();
-        dio.options.baseUrl = 'http://192.168.100.3:8000';
+        dio.options.baseUrl = 'http://138.68.154.175';
         dio.options.connectTimeout = const Duration(seconds: 5);
         dio.options.receiveTimeout = const Duration(minutes: 1);
         dio.options.contentType = 'application/vnd.api+json';

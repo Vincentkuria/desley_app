@@ -27,7 +27,7 @@ class _InventoryHomeState extends State<InventoryHome> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://192.168.100.3:8000';
+    dio.options.baseUrl = 'http://138.68.154.175';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
 
@@ -148,7 +148,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://192.168.100.3:8000';
+                    dio.options.baseUrl = 'http://138.68.154.175';
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -269,7 +269,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                                                   onPressed: () async {
                                                     final dio = Dio();
                                                     dio.options.baseUrl =
-                                                        'http://192.168.100.3:8000';
+                                                        'http://138.68.154.175';
                                                     dio.options.connectTimeout =
                                                         const Duration(
                                                             seconds: 5);
@@ -364,7 +364,7 @@ class _InventoryHomeState extends State<InventoryHome> {
                                       } else {
                                         final dio = Dio();
                                         dio.options.baseUrl =
-                                            'http://192.168.100.3:8000';
+                                            'http://138.68.154.175';
                                         dio.options.connectTimeout =
                                             const Duration(seconds: 5);
                                         dio.options.receiveTimeout =

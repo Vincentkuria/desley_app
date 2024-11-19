@@ -21,7 +21,7 @@ class _ServiceWorkerState extends State<ServiceWorker> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://192.168.100.3:8000';
+    dio.options.baseUrl = 'http://138.68.154.175';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
@@ -119,7 +119,7 @@ class _ServiceWorkerState extends State<ServiceWorker> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://192.168.100.3:8000';
+                    dio.options.baseUrl = 'http://138.68.154.175';
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -171,8 +171,7 @@ class _ServiceWorkerState extends State<ServiceWorker> {
                           ? PopupMenuButton(onSelected: (value) async {
                               if (value == 1) {
                                 final dio = Dio();
-                                dio.options.baseUrl =
-                                    'http://192.168.100.3:8000';
+                                dio.options.baseUrl = 'http://138.68.154.175';
                                 dio.options.connectTimeout =
                                     const Duration(seconds: 5);
                                 dio.options.receiveTimeout =
