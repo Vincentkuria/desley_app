@@ -21,11 +21,15 @@ class _SupplierHomeState extends State<SupplierHome> {
   String token;
   Map<String, dynamic> suser = {};
   List<dynamic>? data;
+
+  var amountController = TextEditingController();
+
+  String amountError = '';
   _SupplierHomeState({required this.token});
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://138.68.154.175';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
 
@@ -122,7 +126,7 @@ class _SupplierHomeState extends State<SupplierHome> {
                   child: MaterialButton(
                     onPressed: () async {
                       final dio = Dio();
-                      dio.options.baseUrl = 'http://138.68.154.175';
+                      dio.options.baseUrl = 'http://192.168.100.3:8000';
                       dio.options.connectTimeout = const Duration(seconds: 5);
                       dio.options.receiveTimeout = const Duration(minutes: 1);
                       dio.options.contentType = 'application/vnd.api+json';
@@ -191,47 +195,129 @@ class _SupplierHomeState extends State<SupplierHome> {
                       trailing: PopupMenuButton(
                           onSelected: (value) async {
                             if (value == 1) {
-                              final dio = Dio();
-                              dio.options.baseUrl = 'http://138.68.154.175';
-                              dio.options.connectTimeout =
-                                  const Duration(seconds: 5);
-                              dio.options.receiveTimeout =
-                                  const Duration(minutes: 1);
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => StatefulBuilder(
+                                          builder: (context, setState) {
+                                        return AlertDialog(
+                                          title: const Text('Invoice'),
+                                          content: Column(
+                                            children: [
+                                              Text(
+                                                  'Enter amount to be payed per item'),
+                                              TextField(
+                                                  controller: amountController,
+                                                  decoration: InputDecoration(
+                                                      hintText:
+                                                          'Invoice amount',
+                                                      hintStyle: TextStyle(
+                                                          color: Colors.grey),
+                                                      border:
+                                                          const OutlineInputBorder())),
+                                              amountError.isNotEmpty
+                                                  ? Text(
+                                                      amountError,
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    )
+                                                  : SizedBox(
+                                                      height: 0,
+                                                    ),
+                                              MaterialButton(
+                                                onPressed: () async {
+                                                  if (amountController
+                                                          .text.isNotEmpty &&
+                                                      int.tryParse(
+                                                              amountController
+                                                                  .text) !=
+                                                          null) {
+                                                    if (int.parse(
+                                                            amountController
+                                                                .text) >=
+                                                        inventory['price']) {
+                                                      setState(() {
+                                                        amountError =
+                                                            'amount should be less than ${inventory['price']}';
+                                                      });
+                                                      return;
+                                                    }
+                                                    final dio = Dio();
+                                                    dio.options.baseUrl =
+                                                        'http://192.168.100.3:8000';
+                                                    dio.options.connectTimeout =
+                                                        const Duration(
+                                                            seconds: 5);
+                                                    dio.options.receiveTimeout =
+                                                        const Duration(
+                                                            minutes: 1);
 
-                              try {
-                                // ignore: unused_local_variable
-                                var response = await dio.post(
-                                    '/api/inventory-delivered',
-                                    data: {
-                                      'inventory_id': inventory['id'],
-                                      'no_of_items': itemdata['count'],
-                                      'suptransaction_id': itemdata['id']
-                                    },
-                                    options: Options(headers: {
-                                      'Accept': 'application/vnd.api+json',
-                                      'Authorization': 'Bearer $token'
-                                    }));
+                                                    try {
+                                                      // ignore: unused_local_variable
+                                                      var response = await dio.post(
+                                                          '/api/inventory-delivered',
+                                                          data: {
+                                                            'inventory_id':
+                                                                inventory['id'],
+                                                            'no_of_items':
+                                                                itemdata[
+                                                                    'count'],
+                                                            'suptransaction_id':
+                                                                itemdata['id'],
+                                                            'price': itemdata[
+                                                                    'count'] *
+                                                                int.parse(
+                                                                    amountController
+                                                                        .text)
+                                                          },
+                                                          options: Options(
+                                                              headers: {
+                                                                'Accept':
+                                                                    'application/vnd.api+json',
+                                                                'Authorization':
+                                                                    'Bearer $token'
+                                                              }));
 
-                                //store payment info for finance approval
-                                await dio.post('/api/payments',
-                                    data: {
-                                      'amount':
-                                          itemdata['count'] * itemdata['price']
-                                    },
-                                    options: Options(headers: {
-                                      'Accept': 'application/vnd.api+json',
-                                      'Authorization': 'Bearer $token'
-                                    }));
+                                                      //store payment info for finance approval
+                                                      await dio.post(
+                                                          '/api/payments',
+                                                          data: {
+                                                            'amount': itemdata[
+                                                                    'count'] *
+                                                                int.parse(
+                                                                    amountController
+                                                                        .text),
+                                                          },
+                                                          options: Options(
+                                                              headers: {
+                                                                'Accept':
+                                                                    'application/vnd.api+json',
+                                                                'Authorization':
+                                                                    'Bearer $token'
+                                                              }));
 
-                                setState(() {
-                                  data!.removeAt(index);
-                                });
+                                                      removeDataitem(index);
 
-                                // ignore: unused_catch_clause
-                              } on DioException catch (e) {
-                                // dynamic error = e.response?.data;
-                                // print(error);
-                              }
+                                                      Navigator.pop(context);
+                                                      // ignore: unused_catch_clause
+                                                    } on DioException catch (e) {
+                                                      dynamic error =
+                                                          e.response?.data;
+                                                      print(error);
+                                                      print(itemdata);
+                                                    }
+                                                  }
+                                                },
+                                                color: Colors.indigo,
+                                                child: Text(
+                                                  'submit',
+                                                  style: TextStyle(
+                                                      color: Colors.white),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      }));
                             }
                           },
                           itemBuilder: (context) => [
@@ -243,5 +329,11 @@ class _SupplierHomeState extends State<SupplierHome> {
                     );
                   }),
         ));
+  }
+
+  void removeDataitem(int index) {
+    setState(() {
+      data!.removeAt(index);
+    });
   }
 }

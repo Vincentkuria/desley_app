@@ -30,7 +30,7 @@ class _ServiceManagerState extends State<ServiceManager> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://138.68.154.175';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
@@ -251,7 +251,7 @@ class _ServiceManagerState extends State<ServiceManager> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://138.68.154.175';
+                    dio.options.baseUrl = 'http://192.168.100.3:8000';
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -360,7 +360,7 @@ class _ServiceManagerState extends State<ServiceManager> {
                                                               final dio = Dio();
                                                               dio.options
                                                                       .baseUrl =
-                                                                  'http://138.68.154.175';
+                                                                  'http://192.168.100.3:8000';
                                                               dio.options
                                                                       .connectTimeout =
                                                                   const Duration(
@@ -464,7 +464,7 @@ class _ServiceManagerState extends State<ServiceManager> {
 
   void createGroup() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://138.68.154.175';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';

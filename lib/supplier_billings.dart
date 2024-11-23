@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:pdf/pdf.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:pdf/widgets.dart' as pw;
 
@@ -25,7 +26,7 @@ class _SupplierBillingState extends State<SupplierBilling> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://138.68.154.175';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
 
@@ -109,7 +110,7 @@ class _SupplierBillingState extends State<SupplierBilling> {
               child: MaterialButton(
                 onPressed: () async {
                   final dio = Dio();
-                  dio.options.baseUrl = 'http://138.68.154.175';
+                  dio.options.baseUrl = 'http://192.168.100.3:8000';
                   dio.options.connectTimeout = const Duration(seconds: 5);
                   dio.options.receiveTimeout = const Duration(minutes: 1);
                   dio.options.contentType = 'application/vnd.api+json';
@@ -213,7 +214,7 @@ class _SupplierBillingState extends State<SupplierBilling> {
                                   width: 5,
                                 ),
                                 Text(
-                                  '${data![index]['amount'] * -1}',
+                                  '${data![index]['amount']}',
                                   style: TextStyle(
                                       color: Colors.green,
                                       fontWeight: FontWeight.w600),
@@ -333,7 +334,7 @@ class _SupplierBillingState extends State<SupplierBilling> {
                                                         thickness: 1.5),
                                                     pw.SizedBox(height: 8),
                                                     pw.Text(
-                                                        "Total Amount: ${data![index]['amount'] * -1}"),
+                                                        "Total Amount: ${data![index]['amount']}"),
                                                     pw.Text(
                                                         "Finance Status: ${data![index]['status']['finance']}"),
 
@@ -360,22 +361,35 @@ class _SupplierBillingState extends State<SupplierBilling> {
                                             print('finished pdf vini');
 
                                             //request permission
-                                            // if (Platform.isAndroid) {
-                                            //   if (await Permission.storage
-                                            //       .request()
-                                            //       .isDenied) {
-                                            //     print(
-                                            //         "Storage permission is required to save the file in Downloads. vini");
-                                            //     return;
-                                            //   }
-                                            // }
+
+                                            if (await Permission
+                                                .manageExternalStorage
+                                                .isGranted) {
+                                              print(
+                                                  "Manage External Storage permission granted.");
+                                            } else {
+                                              // Request permission or redirect to settings
+                                              var status = await Permission
+                                                  .manageExternalStorage
+                                                  .request();
+                                              if (status.isGranted) {
+                                                print("Permission granted!");
+                                              } else if (status
+                                                  .isPermanentlyDenied) {
+                                                print(
+                                                    "Permission permanently denied. Redirecting to settings...");
+                                                openAppSettings(); // Redirect to app settings
+                                              } else {
+                                                print("Permission denied.");
+                                              }
+                                            }
 
                                             //save pdf
                                             final downloads = Directory(
                                                 "/storage/emulated/0/Download");
 
                                             final filepath =
-                                                '${downloads.path}/invoice.pdf';
+                                                '${downloads.path}/invoice_${data![index]['payment_code']}.pdf';
 
                                             final file = File(filepath);
                                             await file

@@ -34,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _getSalesData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://138.68.154.175';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
@@ -181,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://138.68.154.175';
+                    dio.options.baseUrl = 'http://192.168.100.3:8000';
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -607,7 +607,7 @@ class MySearchDelegate extends SearchDelegate {
   @override
   void showResults(BuildContext context) async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://138.68.154.175';
+    dio.options.baseUrl = 'http://192.168.100.3:8000';
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
