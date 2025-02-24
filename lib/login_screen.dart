@@ -4,6 +4,7 @@ import 'package:desley_app/register_screen.dart';
 import 'package:desley_app/slogin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
@@ -36,7 +37,7 @@ class _LoginState extends State<Login> {
 
   void _loginCustomer(BuildContext context) async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://192.168.100.3:8000';
+    dio.options.baseUrl = dotenv.env['BASE_URL']!!;
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     final data = {

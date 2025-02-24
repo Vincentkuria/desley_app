@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 
 class FeedbackMessageScreen extends StatefulWidget {
@@ -18,7 +19,7 @@ class _FeedbackMessageScreenState extends State<FeedbackMessageScreen> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://192.168.100.3:8000';
+    dio.options.baseUrl = dotenv.env['BASE_URL']!!;
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
@@ -123,7 +124,7 @@ class _FeedbackMessageScreenState extends State<FeedbackMessageScreen> {
                                                 onPressed: () async {
                                                   final dio = Dio();
                                                   dio.options.baseUrl =
-                                                      'http://192.168.100.3:8000';
+                                                      dotenv.env['BASE_URL']!!;
                                                   dio.options.connectTimeout =
                                                       const Duration(
                                                           seconds: 5);

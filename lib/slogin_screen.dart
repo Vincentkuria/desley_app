@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:desley_app/supplier_screen.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -28,7 +29,7 @@ class _SloginState extends State<Slogin> {
 
   loginEmployee() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://192.168.100.3:8000';
+    dio.options.baseUrl = dotenv.env['BASE_URL']!!;
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';

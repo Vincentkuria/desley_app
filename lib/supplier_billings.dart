@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:desley_app/onboarding_screen.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
@@ -26,7 +27,7 @@ class _SupplierBillingState extends State<SupplierBilling> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://192.168.100.3:8000';
+    dio.options.baseUrl = dotenv.env['BASE_URL']!!;
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
 
@@ -110,7 +111,7 @@ class _SupplierBillingState extends State<SupplierBilling> {
               child: MaterialButton(
                 onPressed: () async {
                   final dio = Dio();
-                  dio.options.baseUrl = 'http://192.168.100.3:8000';
+                  dio.options.baseUrl = dotenv.env['BASE_URL']!!;
                   dio.options.connectTimeout = const Duration(seconds: 5);
                   dio.options.receiveTimeout = const Duration(minutes: 1);
                   dio.options.contentType = 'application/vnd.api+json';

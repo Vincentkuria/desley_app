@@ -1,6 +1,7 @@
 import 'package:desley_app/onboarding_screen.dart';
 import 'package:desley_app/verify_screen.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
@@ -30,7 +31,7 @@ class _ServiceManagerState extends State<ServiceManager> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://192.168.100.3:8000';
+    dio.options.baseUrl = dotenv.env['BASE_URL']!!;
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
@@ -251,7 +252,7 @@ class _ServiceManagerState extends State<ServiceManager> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://192.168.100.3:8000';
+                    dio.options.baseUrl = dotenv.env['BASE_URL']!!;
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -360,7 +361,8 @@ class _ServiceManagerState extends State<ServiceManager> {
                                                               final dio = Dio();
                                                               dio.options
                                                                       .baseUrl =
-                                                                  'http://192.168.100.3:8000';
+                                                                  dotenv.env[
+                                                                      'BASE_URL']!;
                                                               dio.options
                                                                       .connectTimeout =
                                                                   const Duration(
@@ -464,7 +466,7 @@ class _ServiceManagerState extends State<ServiceManager> {
 
   void createGroup() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://192.168.100.3:8000';
+    dio.options.baseUrl = dotenv.env['BASE_URL']!!;
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';

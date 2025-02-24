@@ -1,6 +1,7 @@
 import 'package:desley_app/onboarding_screen.dart';
 import 'package:desley_app/verify_screen.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,7 +22,7 @@ class _ServiceWorkerState extends State<ServiceWorker> {
 
   getData() async {
     final dio = Dio();
-    dio.options.baseUrl = 'http://192.168.100.3:8000';
+    dio.options.baseUrl = dotenv.env['BASE_URL']!!;
     dio.options.connectTimeout = const Duration(seconds: 5);
     dio.options.receiveTimeout = const Duration(minutes: 1);
     dio.options.contentType = 'application/vnd.api+json';
@@ -119,7 +120,7 @@ class _ServiceWorkerState extends State<ServiceWorker> {
                 child: MaterialButton(
                   onPressed: () async {
                     final dio = Dio();
-                    dio.options.baseUrl = 'http://192.168.100.3:8000';
+                    dio.options.baseUrl = dotenv.env['BASE_URL']!!;
                     dio.options.connectTimeout = const Duration(seconds: 5);
                     dio.options.receiveTimeout = const Duration(minutes: 1);
                     dio.options.contentType = 'application/vnd.api+json';
@@ -159,60 +160,77 @@ class _ServiceWorkerState extends State<ServiceWorker> {
                   child: Text('No Job now check later'),
                 ),
               )
-            : ListView.builder(
-                itemCount: 1,
-                itemBuilder: (context, index) {
-                  return Card(
-                    child: ListTile(
-                      title: Text(
-                          'Job: ${data?['job']} For: ${data?['count']} hours'),
-                      subtitle: Text('Address:${data?['address']}'),
-                      trailing: data?['supervisor']
-                          ? PopupMenuButton(onSelected: (value) async {
-                              if (value == 1) {
-                                final dio = Dio();
-                                dio.options.baseUrl =
-                                    'http://192.168.100.3:8000';
-                                dio.options.connectTimeout =
-                                    const Duration(seconds: 5);
-                                dio.options.receiveTimeout =
-                                    const Duration(minutes: 1);
-                                dio.options.contentType =
-                                    'application/vnd.api+json';
-                                dio.options.responseType = ResponseType.json;
+            : Column(
+                children: [
+                  Text(
+                    'your group supervisor is ${data?['supervisor']['first_name']} ${data?['supervisor']['last_name']}',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
+                  ),
+                  Text(
+                    'email: ${data?['supervisor']['email']}',
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: 1,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            child: ListTile(
+                              title: Text(
+                                  'Job: ${data?['job']} For: ${data?['count']} hours'),
+                              subtitle: Text('Address:${data?['address']}'),
+                              trailing: data?['issupervisor']
+                                  ? PopupMenuButton(onSelected: (value) async {
+                                      if (value == 1) {
+                                        final dio = Dio();
+                                        dio.options.baseUrl =
+                                            dotenv.env['BASE_URL']!!;
+                                        dio.options.connectTimeout =
+                                            const Duration(seconds: 5);
+                                        dio.options.receiveTimeout =
+                                            const Duration(minutes: 1);
+                                        dio.options.contentType =
+                                            'application/vnd.api+json';
+                                        dio.options.responseType =
+                                            ResponseType.json;
 
-                                try {
-                                  await dio.post('/api/job-done',
-                                      data: {
-                                        'shipping': data!['shipping'],
-                                        'serviceGroup': data!['serviceGroup'],
-                                      },
-                                      options: Options(headers: {
-                                        'Accept': 'application/vnd.api+json',
-                                        'Authorization': 'Bearer $token'
-                                      }));
+                                        try {
+                                          await dio.post('/api/job-done',
+                                              data: {
+                                                'shipping': data!['shipping'],
+                                                'serviceGroup':
+                                                    data!['serviceGroup'],
+                                              },
+                                              options: Options(headers: {
+                                                'Accept':
+                                                    'application/vnd.api+json',
+                                                'Authorization': 'Bearer $token'
+                                              }));
 
-                                  setState(() {
-                                    data = null;
-                                  });
-                                } catch (e) {
-                                  //dynamic error = e.response?.data;
-                                }
-                              }
-                            }, itemBuilder: (context) {
-                              return [
-                                const PopupMenuItem(
-                                  child: Text('Job Done'),
-                                  value: 1,
-                                ),
-                              ];
-                            })
-                          : SizedBox(
-                              width: 0,
+                                          setState(() {
+                                            data = null;
+                                          });
+                                        } catch (e) {
+                                          //dynamic error = e.response?.data;
+                                        }
+                                      }
+                                    }, itemBuilder: (context) {
+                                      return [
+                                        const PopupMenuItem(
+                                          child: Text('Job Done'),
+                                          value: 1,
+                                        ),
+                                      ];
+                                    })
+                                  : SizedBox(
+                                      width: 0,
+                                    ),
                             ),
-                    ),
-                  );
-                }),
+                          );
+                        }),
+                  ),
+                ],
+              ),
       ),
     );
   }
